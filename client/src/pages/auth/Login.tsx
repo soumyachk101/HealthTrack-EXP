@@ -3,229 +3,266 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { getCookie } from "@/lib/csrf"
-import { Loader2, Activity, Shield, Heart, Eye, EyeOff, Mail, Lock, ArrowRight, Sparkles } from "lucide-react"
+import { Loader2, Eye, EyeOff, Mail, Lock, ArrowRight, User, Stethoscope, Building2, Activity, AlertCircle } from "lucide-react"
+import { Link, useNavigate } from "react-router-dom"
+import { cn } from "@/lib/utils"
 
 export default function Login() {
+    const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(false)
     const [csrfToken, setCsrfToken] = useState<string>("")
     const [showPassword, setShowPassword] = useState(false)
-    const [focusedField, setFocusedField] = useState<string | null>(null)
+    const [role, setRole] = useState<'patient' | 'doctor' | 'provider'>('patient')
+    const [error, setError] = useState<string | null>(null)
+
+    const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
 
     useEffect(() => {
         const token = getCookie("csrftoken")
         if (token) setCsrfToken(token)
     }, [])
 
-    const handleSubmit = () => {
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setError(null)
         setIsLoading(true)
+
+        try {
+            const response = await fetch(`${API_URL}/accounts/api/login/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({
+                    username: (e.target as any).username.value,
+                    password: (e.target as any).password.value
+                })
+            })
+
+            const data = await response.json()
+
+            if (data.success) {
+                localStorage.setItem('token', data.token)
+                // Store user info if needed
+                if (data.user) {
+                    localStorage.setItem('user', JSON.stringify(data.user))
+                }
+                navigate('/dashboard')
+            } else {
+                setError(data.error || "Login failed")
+            }
+        } catch (err) {
+            setError("Network error. Please try again.")
+            console.error(err)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const getRoleIcon = () => {
+        switch (role) {
+            case 'doctor': return <Stethoscope className="h-6 w-6 text-teal-600" />
+            case 'provider': return <Building2 className="h-6 w-6 text-teal-600" />
+            default: return <User className="h-6 w-6 text-teal-600" />
+        }
+    }
+
+    const getRoleTitle = () => {
+        switch (role) {
+            case 'doctor': return "Doctor Portal"
+            case 'provider': return "Provider Portal"
+            default: return "Patient Portal"
+        }
     }
 
     return (
-        <div className="min-h-screen flex bg-gradient-to-br from-slate-50 via-white to-teal-50/30">
-            {/* Left: Form Section */}
-            <div className="flex-1 flex flex-col justify-center px-6 sm:px-12 lg:px-20 xl:px-28 py-12 relative">
-                {/* Subtle background pattern */}
-                <div className="absolute inset-0 opacity-[0.015]" style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-                }} />
+        <div className="min-h-screen flex bg-[#EFF6FF] text-slate-700 font-sans selection:bg-teal-200 selection:text-teal-900 relative overflow-hidden">
+            {/* TEXTURE OVERLAY */}
+            <div className="bg-texture"></div>
 
-                <div className="w-full max-w-md mx-auto relative z-10">
-                    {/* Logo */}
-                    <div className="flex items-center gap-3 mb-12">
-                        <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center shadow-lg shadow-teal-500/25">
-                            <Sparkles className="h-6 w-6 text-white" />
-                        </div>
-                        <span className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                            HealthTrack+
+            {/* Left: Decoration Side (Desktop) */}
+            <div className="hidden lg:flex lg:w-[50%] relative items-center justify-center p-12">
+                {/* Floating Elements */}
+                <div className="absolute top-[20%] left-[20%] w-32 h-32 rounded-full bg-[#EFF6FF] shadow-skeuo-md animate-blob-float opacity-80"></div>
+                <div className="absolute bottom-[20%] right-[20%] w-40 h-40 rounded-full bg-[#EFF6FF] shadow-skeuo-convex animate-blob-float opacity-60" style={{ animationDelay: '-2s' }}></div>
+
+                <div className="relative z-10 max-w-lg">
+                    <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-[#EFF6FF] shadow-skeuo-inset-sm border-b border-white/50 mb-8">
+                        <span className="flex h-3 w-3 rounded-full bg-teal-500 shadow-[2px_2px_4px_#cdcaca,-2px_-2px_4px_#ffffff] animate-pulse"></span>
+                        <span className="text-xs font-bold uppercase tracking-widest text-slate-500">Secure Access v2.5</span>
+                    </div>
+
+                    <h1 className="text-6xl font-black text-slate-800 tracking-tight leading-tight mb-6">
+                        Welcome <br />
+                        <span className="text-teal-600">Back.</span>
+                    </h1>
+
+                    <p className="text-xl text-slate-500 leading-relaxed font-medium">
+                        Access your comprehensive health dashboard.
+                        <span className="block mt-4 p-4 rounded-2xl bg-[#EFF6FF] shadow-skeuo-sm border border-white/50 text-sm">
+                            <Activity className="inline-block w-4 h-4 mr-2 text-teal-500" />
+                            Real-time vitals synchronization active.
                         </span>
-                    </div>
-
-                    {/* Header */}
-                    <div className="mb-10">
-                        <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-3">
-                            Welcome back
-                        </h1>
-                        <p className="text-slate-500 text-lg">
-                            Sign in to continue managing your health journey
-                        </p>
-                    </div>
-
-                    {/* Form */}
-                    <form method="POST" action="/accounts/login/" onSubmit={handleSubmit} className="space-y-6">
-                        <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
-
-                        {/* Email Field */}
-                        <div className="space-y-2">
-                            <Label htmlFor="username" className="text-sm font-semibold text-slate-700">
-                                Email or Phone Number
-                            </Label>
-                            <div className="relative group">
-                                <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-200 ${focusedField === 'username' ? 'text-teal-500' : 'text-slate-400'}`}>
-                                    <Mail className="h-5 w-5" />
-                                </div>
-                                <Input
-                                    id="username"
-                                    name="username"
-                                    type="text"
-                                    required
-                                    placeholder="name@example.com"
-                                    className="h-13 pl-12 pr-4 bg-white border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:ring-teal-500/20 focus:ring-4 transition-all duration-200 shadow-sm hover:border-slate-300"
-                                    autoComplete="username"
-                                    onFocus={() => setFocusedField('username')}
-                                    onBlur={() => setFocusedField(null)}
-                                />
-                            </div>
-                        </div>
-
-                        {/* Password Field */}
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <Label htmlFor="password" className="text-sm font-semibold text-slate-700">
-                                    Password
-                                </Label>
-                                <a 
-                                    href="/accounts/password_reset/" 
-                                    className="text-sm font-medium text-teal-600 hover:text-teal-700 transition-colors"
-                                >
-                                    Forgot password?
-                                </a>
-                            </div>
-                            <div className="relative group">
-                                <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-200 ${focusedField === 'password' ? 'text-teal-500' : 'text-slate-400'}`}>
-                                    <Lock className="h-5 w-5" />
-                                </div>
-                                <Input
-                                    id="password"
-                                    name="password"
-                                    type={showPassword ? "text" : "password"}
-                                    required
-                                    placeholder="Enter your password"
-                                    className="h-13 pl-12 pr-12 bg-white border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:ring-teal-500/20 focus:ring-4 transition-all duration-200 shadow-sm hover:border-slate-300"
-                                    autoComplete="current-password"
-                                    onFocus={() => setFocusedField('password')}
-                                    onBlur={() => setFocusedField(null)}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-                                >
-                                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Submit Button */}
-                        <Button 
-                            type="submit" 
-                            className="w-full h-13 bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white font-semibold rounded-xl shadow-lg shadow-teal-500/25 hover:shadow-xl hover:shadow-teal-500/30 transition-all duration-300 group"
-                            disabled={isLoading}
-                        >
-                            {isLoading ? (
-                                <Loader2 className="h-5 w-5 animate-spin" />
-                            ) : (
-                                <>
-                                    Sign In
-                                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                                </>
-                            )}
-                        </Button>
-                    </form>
-
-                    {/* Divider */}
-                    <div className="relative my-8">
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-slate-200"></div>
-                        </div>
-                        <div className="relative flex justify-center text-sm">
-                            <span className="px-4 bg-gradient-to-br from-slate-50 via-white to-teal-50/30 text-slate-500">
-                                New to HealthTrack+?
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Sign Up Link */}
-                    <a 
-                        href="/accounts/register/" 
-                        className="flex items-center justify-center w-full h-13 border-2 border-slate-200 hover:border-teal-500 rounded-xl text-slate-700 hover:text-teal-600 font-semibold transition-all duration-300 group bg-white hover:bg-teal-50/50"
-                    >
-                        Create an account
-                        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                    </a>
-
-                    {/* Footer */}
-                    <p className="mt-10 text-center text-sm text-slate-500">
-                        © 2026 HealthTrack+. All rights reserved.
                     </p>
                 </div>
             </div>
 
-            {/* Right: Visual Section */}
-            <div className="hidden lg:flex lg:w-[55%] relative overflow-hidden">
-                {/* Gradient Background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
-                
-                {/* Animated Gradient Orbs */}
-                <div className="absolute top-1/4 -left-20 w-96 h-96 bg-teal-500/30 rounded-full blur-3xl animate-pulse" />
-                <div className="absolute bottom-1/4 right-0 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
-                
-                {/* Grid Pattern Overlay */}
-                <div className="absolute inset-0 opacity-[0.03]" style={{
-                    backgroundImage: `linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px)`,
-                    backgroundSize: '50px 50px'
-                }} />
+            {/* Right: Form Section */}
+            <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 relative">
+                {/* Mobile Background Deco */}
+                <div className="absolute inset-0 lg:hidden pointer-events-none">
+                    <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-teal-500/10 rounded-full blur-3xl"></div>
+                </div>
 
-                {/* Content */}
-                <div className="relative z-10 flex flex-col justify-between h-full p-12 xl:p-16">
-                    {/* Top Section */}
-                    <div>
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 mb-8">
-                            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                            <span className="text-sm font-medium text-white/90">Trusted by 50,000+ users</span>
-                        </div>
-                        
-                        <h2 className="text-4xl xl:text-5xl font-bold text-white leading-tight mb-6">
-                            Your Health,
-                            <br />
-                            <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
-                                Reimagined.
-                            </span>
-                        </h2>
-                        
-                        <p className="text-lg text-slate-300 max-w-md leading-relaxed">
-                            Experience the future of personal health management with AI-powered insights, secure medical records, and seamless care coordination.
-                        </p>
-                    </div>
+                <div className="w-full max-w-md space-y-8">
 
-                    {/* Feature Cards */}
-                    <div className="space-y-4">
-                        {[
-                            { icon: Activity, label: "Real-time Health Analytics", color: "from-teal-500 to-emerald-500" },
-                            { icon: Shield, label: "Bank-grade Data Security", color: "from-cyan-500 to-blue-500" },
-                            { icon: Heart, label: "Personalized Wellness Plans", color: "from-rose-500 to-pink-500" },
-                        ].map((feature, index) => (
-                            <div 
-                                key={index}
-                                className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 group cursor-default"
-                            >
-                                <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                                    <feature.icon className="h-6 w-6 text-white" />
-                                </div>
-                                <span className="text-white font-medium text-lg">{feature.label}</span>
+                    {/* Card Container */}
+                    <div className="card-skeuo relative z-10">
+                        {/* Header */}
+                        <div className="text-center mb-10">
+                            <div className="mx-auto w-20 h-20 rounded-2xl bg-[#EFF6FF] shadow-skeuo-floating flex items-center justify-center mb-6 border border-white">
+                                {getRoleIcon()}
                             </div>
-                        ))}
+                            <h2 className="text-3xl font-bold text-slate-800">{getRoleTitle()}</h2>
+                            <p className="mt-2 text-slate-500 font-medium">Enter your credentials to access the system.</p>
+                        </div>
+
+                        {/* Role Switcher */}
+                        <div className="grid grid-cols-3 gap-3 p-2 rounded-2xl bg-[#EFF6FF] shadow-skeuo-inset-sm mb-8 border-b border-white/50">
+                            {(['patient', 'doctor', 'provider'] as const).map((r) => (
+                                <button
+                                    key={r}
+                                    type="button"
+                                    onClick={() => setRole(r)}
+                                    className={cn(
+                                        "flex flex-col items-center justify-center gap-1 py-3 rounded-xl text-xs font-bold transition-all duration-200 uppercase tracking-wide",
+                                        role === r
+                                            ? "bg-[#EFF6FF] text-teal-600 shadow-skeuo-sm scale-[0.98] border border-white/60"
+                                            : "text-slate-400 hover:text-slate-600 hover:bg-[#EFF6FF]/50"
+                                    )}
+                                >
+                                    {r === 'patient' && <User className="h-4 w-4" />}
+                                    {r === 'doctor' && <Stethoscope className="h-4 w-4" />}
+                                    {r === 'provider' && <Building2 className="h-4 w-4" />}
+                                    {r.charAt(0).toUpperCase() + r.slice(1)}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Form */}
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            {error && (
+                                <div className="p-3 rounded-lg bg-red-50 text-red-600 text-sm border border-red-100 flex items-center gap-2">
+                                    <AlertCircle className="h-4 w-4 shrink-0" />
+                                    <span>{error}</span>
+                                </div>
+                            )}
+                            <input type="hidden" name="role" value={role} />
+
+                            <div className="space-y-2">
+                                <Label htmlFor="username" className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                                    Email or Username
+                                </Label>
+                                <div className="relative">
+                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                        <Mail className="h-5 w-5" />
+                                    </div>
+                                    <Input
+                                        id="username"
+                                        name="username"
+                                        type="text"
+                                        required
+                                        className="input-skeuo pl-12"
+                                        autoComplete="username"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <div className="flex justify-between items-center ml-1">
+                                    <Label htmlFor="password" className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                        Password_Key
+                                    </Label>
+                                    <Link to="/accounts/password_reset/" className="text-xs font-bold text-teal-600 hover:text-teal-700">
+                                        Forgot Key?
+                                    </Link>
+                                </div>
+                                <div className="relative">
+                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                        <Lock className="h-5 w-5" />
+                                    </div>
+                                    <Input
+                                        id="password"
+                                        name="password"
+                                        type={showPassword ? "text" : "password"}
+                                        required
+                                        className="input-skeuo pl-12 pr-12"
+                                        autoComplete="current-password"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                                    >
+                                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center ml-1">
+                                <div className="relative flex items-center">
+                                    <input
+                                        id="remember"
+                                        name="remember"
+                                        type="checkbox"
+                                        className="peer h-5 w-5 appearance-none rounded-md border-0 bg-[#EFF6FF] shadow-skeuo-inset-sm checked:bg-teal-500 checked:shadow-skeuo-sm transition-all cursor-pointer"
+                                    />
+                                    <CheckIcon className="absolute w-3.5 h-3.5 left-0.5 top-0.5 text-white opacity-0 peer-checked:opacity-100 pointer-events-none" />
+                                </div>
+                                <label htmlFor="remember" className="ml-3 text-sm text-slate-600 font-bold cursor-pointer select-none">
+                                    Keep session active
+                                </label>
+                            </div>
+
+                            <Button
+                                type="submit"
+                                className="w-full btn-skeuo-primary h-14 text-lg shadow-skeuo-md hover:shadow-skeuo-floating"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                                ) : (
+                                    <span className="flex items-center justify-center gap-2">
+                                        Authenticate <ArrowRight className="h-5 w-5" />
+                                    </span>
+                                )}
+                            </Button>
+                        </form>
+
+                        <div className="mt-8 pt-8 border-t border-slate-200">
+                            <p className="text-center text-slate-500 font-medium">
+                                No account found? {" "}
+                                <Link to="/register" className="text-teal-600 font-bold hover:underline decoration-2 underline-offset-4">
+                                    Create Profile
+                                </Link>
+                            </p>
+                        </div>
                     </div>
 
-                    {/* Bottom Quote */}
-                    <div className="pt-8 border-t border-white/10">
-                        <p className="text-slate-400 italic">
-                            "HealthTrack+ transformed how I manage my family's health records."
-                        </p>
-                        <p className="text-white font-medium mt-2">— Dr. Sarah Chen, Family Physician</p>
-                    </div>
+                    <p className="text-center text-xs font-mono text-slate-400 uppercase tracking-widest opacity-60">
+                        Secure Connection • 256-bit Encryption
+                    </p>
                 </div>
             </div>
         </div>
+    )
+}
+
+function CheckIcon(props: React.SVGProps<SVGSVGElement>) {
+    return (
+        <svg {...props} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
     )
 }
