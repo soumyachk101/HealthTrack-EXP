@@ -75,6 +75,25 @@ export default {
 
                 // Floating/Active state
                 'skeuo-floating': '14px 14px 28px #d1d9e6, -14px -14px 28px #ffffff, 0 4px 20px rgba(45, 212, 191, 0.2)',
+            },
+            keyframes: {
+                'glow-subtle': {
+                    '0%, 100%': {
+                        boxShadow: '5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff'
+                    },
+                    '50%': {
+                        boxShadow: '5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff, 0 0 20px rgba(45, 212, 191, 0.3)'
+                    }
+                },
+                'blob-float': {
+                    '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
+                    '33%': { transform: 'translate(30px, -30px) scale(1.1)' },
+                    '66%': { transform: 'translate(-20px, 20px) scale(0.9)' }
+                }
+            },
+            animation: {
+                'glow-subtle': 'glow-subtle 4s ease-in-out infinite',
+                'blob-float': 'blob-float 7s infinite'
             }
         },
     },
