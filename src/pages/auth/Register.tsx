@@ -1,16 +1,20 @@
+
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { getCookie } from "@/lib/csrf"
-import { Loader2, CheckCircle2, User, Mail, MapPin, Lock, Eye, EyeOff, ArrowRight, Sparkles, Shield, Zap, Users } from "lucide-react"
+import { Loader2, User, Mail, MapPin, Lock, Eye, EyeOff, ArrowRight, Sparkles, Shield, Zap, Users, Stethoscope, Building2 } from "lucide-react"
+import { Link, useNavigate } from "react-router-dom"
+import { cn } from "@/lib/utils"
 
 export default function Register() {
+    const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(false)
     const [csrfToken, setCsrfToken] = useState<string>("")
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-    const [focusedField, setFocusedField] = useState<string | null>(null)
+    const [error, setError] = useState<string | null>(null)
     const [formData, setFormData] = useState({
         first_name: "",
         last_name: "",
@@ -18,21 +22,83 @@ export default function Register() {
         email: "",
         state: "",
         password: "",
-        password2: ""
+        password2: "",
+        role: "patient" // Default role
     })
+
+    const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
 
     useEffect(() => {
         const token = getCookie("csrftoken")
         if (token) setCsrfToken(token)
+
+        // Check for role in URL
+        const searchParams = new URLSearchParams(window.location.search);
+        const roleParam = searchParams.get('role');
+        if (roleParam && ['patient', 'doctor', 'provider'].includes(roleParam)) {
+            setFormData(prev => ({ ...prev, role: roleParam }));
+        }
     }, [])
 
-    const handleSubmit = () => {
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setError(null)
         setIsLoading(true)
+
+        if (formData.password !== formData.password2) {
+            setError("Passwords do not match")
+            setIsLoading(false)
+            return
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/accounts/api/register/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    username: formData.username,
+                    email: formData.email,
+                    password: formData.password,
+                    first_name: formData.first_name,
+                    last_name: formData.last_name,
+                    role: formData.role
+                })
+            })
+
+            const data = await response.json()
+
+            if (data.success) {
+                if (data.otp_required) {
+                    localStorage.setItem('verification_email', formData.email)
+                    localStorage.setItem('verification_type', 'register')
+                    navigate('/verify-otp')
+                    return
+                }
+                // Store token if needed
+                localStorage.setItem('token', data.token)
+                navigate('/dashboard')
+            } else {
+                setError(data.error || "Registration failed")
+            }
+        } catch (err) {
+            setError("Network error. Please try again.")
+            console.error(err)
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target
         setFormData(prev => ({ ...prev, [name]: value }))
+    }
+
+    const setRole = (role: string) => {
+        setFormData(prev => ({ ...prev, role }))
     }
 
     const indianStates = [
@@ -44,73 +110,100 @@ export default function Register() {
         "Puducherry", "Andaman & Nicobar", "Lakshadweep", "Dadra & Nagar Haveli"
     ]
 
+    const getRoleTitle = () => {
+        switch (formData.role) {
+            case 'doctor': return "Doctor Registration"
+            case 'provider': return "Provider Registration"
+            default: return "Create Account"
+        }
+    }
+
     return (
-        <div className="min-h-screen flex bg-gradient-to-br from-slate-50 via-white to-teal-50/30">
+        <div className="min-h-screen flex bg-[#EFF6FF] text-slate-700 font-sans selection:bg-teal-200 selection:text-teal-900 overflow-hidden">
+            {/* TEXTURE OVERLAY */}
+            <div className="bg-texture"></div>
+
             {/* Left: Form Section */}
-            <div className="flex-1 flex flex-col justify-center px-6 sm:px-12 lg:px-16 xl:px-24 py-8 relative overflow-y-auto">
-                {/* Subtle background pattern */}
-                <div className="absolute inset-0 opacity-[0.015]" style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-                }} />
+            <div className="flex-1 flex flex-col justify-center px-4 sm:px-12 lg:px-16 xl:px-24 py-8 relative overflow-y-auto h-screen scrollbar-hide z-10">
 
-                <div className="w-full max-w-xl mx-auto relative z-10">
-                    {/* Logo */}
-                    <div className="flex items-center gap-3 mb-8">
-                        <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center shadow-lg shadow-teal-500/25">
-                            <Sparkles className="h-6 w-6 text-white" />
-                        </div>
-                        <span className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                            HealthTrack+
-                        </span>
-                    </div>
-
+                <div className="w-full max-w-xl mx-auto py-8">
                     {/* Header */}
                     <div className="mb-8">
-                        <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight mb-3">
-                            Create your account
+                        {/* Role Switcher */}
+                        <div className="grid grid-cols-3 gap-3 p-2 rounded-2xl bg-[#EFF6FF] shadow-skeuo-inset-sm mb-8 border border-white/50 w-full max-w-[400px]">
+                            {(['patient', 'doctor', 'provider'] as const).map((r) => (
+                                <button
+                                    key={r}
+                                    type="button"
+                                    onClick={() => setRole(r)}
+                                    className={cn(
+                                        "flex flex-col items-center justify-center gap-1 py-3 rounded-xl text-xs font-bold transition-all duration-200 uppercase tracking-wide",
+                                        formData.role === r
+                                            ? "bg-[#EFF6FF] text-teal-600 shadow-skeuo-sm scale-[0.98] border border-white/60"
+                                            : "text-slate-400 hover:text-slate-600 hover:bg-[#EFF6FF]/50"
+                                    )}
+                                >
+                                    {r === 'patient' && <User className="h-4 w-4" />}
+                                    {r === 'doctor' && <Stethoscope className="h-4 w-4" />}
+                                    {r === 'provider' && <Building2 className="h-4 w-4" />}
+                                    {r.charAt(0).toUpperCase() + r.slice(1)}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="h-12 w-12 bg-[#EFF6FF] rounded-xl flex items-center justify-center shadow-skeuo-sm border border-white text-teal-500">
+                                <Sparkles className="h-6 w-6" />
+                            </div>
+                            <span className="text-xl font-black text-slate-800 tracking-tighter">HealthTrack+</span>
+                        </div>
+                        <h1 className="text-4xl font-black text-slate-800 tracking-tight mb-2">
+                            {getRoleTitle()}
                         </h1>
-                        <p className="text-slate-500 text-lg">
-                            Start your journey to better health management
+                        <p className="text-slate-500 font-medium text-sm">
+                            Enter your details to register for the unified health network.
                         </p>
                     </div>
 
                     {/* Form */}
-                    <form method="POST" action="/accounts/register/" onSubmit={handleSubmit} className="space-y-5">
-                        <input type="hidden" name="csrfmiddlewaretoken" value={csrfToken} />
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                        {error && (
+                            <div className="p-3 rounded-lg bg-red-50 text-red-600 text-sm border border-red-100 flex items-center gap-2">
+                                <Shield className="h-4 w-4 shrink-0" />
+                                <span>{error}</span>
+                            </div>
+                        )}
+                        <input type="hidden" name="role" value={formData.role} />
 
                         {/* Name Fields */}
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="first_name" className="text-sm font-semibold text-slate-700">
+                                <Label htmlFor="first_name" className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
                                     First Name
                                 </Label>
                                 <div className="relative">
-                                    <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-200 ${focusedField === 'first_name' ? 'text-teal-500' : 'text-slate-400'}`}>
-                                        <User className="h-5 w-5" />
+                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                        <User className="h-4 w-4" />
                                     </div>
                                     <Input
                                         id="first_name"
                                         name="first_name"
-                                        placeholder="John"
                                         required
-                                        className="h-12 pl-12 pr-4 bg-white border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:ring-teal-500/20 focus:ring-4 transition-all duration-200 shadow-sm hover:border-slate-300"
+                                        className="input-skeuo pl-10"
                                         value={formData.first_name}
                                         onChange={handleChange}
-                                        onFocus={() => setFocusedField('first_name')}
-                                        onBlur={() => setFocusedField(null)}
                                     />
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="last_name" className="text-sm font-semibold text-slate-700">
+                                <Label htmlFor="last_name" className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
                                     Last Name
                                 </Label>
                                 <Input
                                     id="last_name"
                                     name="last_name"
-                                    placeholder="Doe"
                                     required
-                                    className="h-12 px-4 bg-white border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:ring-teal-500/20 focus:ring-4 transition-all duration-200 shadow-sm hover:border-slate-300"
+                                    className="input-skeuo px-4"
                                     value={formData.last_name}
                                     onChange={handleChange}
                                 />
@@ -119,15 +212,14 @@ export default function Register() {
 
                         {/* Username */}
                         <div className="space-y-2">
-                            <Label htmlFor="username" className="text-sm font-semibold text-slate-700">
+                            <Label htmlFor="username" className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
                                 Username
                             </Label>
                             <Input
                                 id="username"
                                 name="username"
-                                placeholder="johndoe123"
                                 required
-                                className="h-12 px-4 bg-white border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:ring-teal-500/20 focus:ring-4 transition-all duration-200 shadow-sm hover:border-slate-300"
+                                className="input-skeuo px-4"
                                 autoComplete="username"
                                 value={formData.username}
                                 onChange={handleChange}
@@ -136,55 +228,50 @@ export default function Register() {
 
                         {/* Email */}
                         <div className="space-y-2">
-                            <Label htmlFor="email" className="text-sm font-semibold text-slate-700">
+                            <Label htmlFor="email" className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
                                 Email Address
                             </Label>
                             <div className="relative">
-                                <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-200 ${focusedField === 'email' ? 'text-teal-500' : 'text-slate-400'}`}>
-                                    <Mail className="h-5 w-5" />
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                    <Mail className="h-4 w-4" />
                                 </div>
                                 <Input
                                     id="email"
                                     name="email"
                                     type="email"
-                                    placeholder="john@example.com"
                                     required
-                                    className="h-12 pl-12 pr-4 bg-white border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:ring-teal-500/20 focus:ring-4 transition-all duration-200 shadow-sm hover:border-slate-300"
+                                    className="input-skeuo pl-10"
                                     autoComplete="email"
                                     value={formData.email}
                                     onChange={handleChange}
-                                    onFocus={() => setFocusedField('email')}
-                                    onBlur={() => setFocusedField(null)}
                                 />
                             </div>
                         </div>
 
                         {/* State */}
                         <div className="space-y-2">
-                            <Label htmlFor="state" className="text-sm font-semibold text-slate-700">
-                                State
+                            <Label htmlFor="state" className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                                Region / State
                             </Label>
                             <div className="relative">
-                                <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-200 ${focusedField === 'state' ? 'text-teal-500' : 'text-slate-400'}`}>
-                                    <MapPin className="h-5 w-5" />
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                    <MapPin className="h-4 w-4" />
                                 </div>
                                 <select
                                     id="state"
                                     name="state"
                                     required
-                                    className="flex h-12 w-full rounded-xl border border-slate-200 bg-white pl-12 pr-4 py-2 text-sm text-slate-900 shadow-sm hover:border-slate-300 focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20 focus:outline-none transition-all duration-200 appearance-none cursor-pointer"
+                                    className="flex h-12 w-full rounded-xl border-none bg-input shadow-skeuo-inset-md pl-10 pr-4 py-2 text-sm text-slate-700 focus:ring-2 focus:ring-teal-500/50 appearance-none cursor-pointer outline-none transition-shadow"
                                     value={formData.state}
                                     onChange={handleChange}
-                                    onFocus={() => setFocusedField('state')}
-                                    onBlur={() => setFocusedField(null)}
                                     style={{
                                         backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`,
                                         backgroundRepeat: 'no-repeat',
                                         backgroundPosition: 'right 12px center',
-                                        backgroundSize: '20px'
+                                        backgroundSize: '16px'
                                     }}
                                 >
-                                    <option value="">Select State</option>
+                                    <option value="">Select Region</option>
                                     {indianStates.map(state => (
                                         <option key={state} value={state}>{state}</option>
                                     ))}
@@ -195,38 +282,35 @@ export default function Register() {
                         {/* Password Fields */}
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="password" className="text-sm font-semibold text-slate-700">
+                                <Label htmlFor="password" className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
                                     Password
                                 </Label>
                                 <div className="relative">
-                                    <div className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-200 ${focusedField === 'password' ? 'text-teal-500' : 'text-slate-400'}`}>
-                                        <Lock className="h-5 w-5" />
+                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                        <Lock className="h-4 w-4" />
                                     </div>
                                     <Input
                                         id="password"
                                         name="password"
                                         type={showPassword ? "text" : "password"}
                                         required
-                                        placeholder="••••••••"
-                                        className="h-12 pl-12 pr-12 bg-white border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:ring-teal-500/20 focus:ring-4 transition-all duration-200 shadow-sm hover:border-slate-300"
+                                        className="input-skeuo pl-10 pr-10"
                                         autoComplete="new-password"
                                         value={formData.password}
                                         onChange={handleChange}
-                                        onFocus={() => setFocusedField('password')}
-                                        onBlur={() => setFocusedField(null)}
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                                     >
                                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                     </button>
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="password2" className="text-sm font-semibold text-slate-700">
-                                    Confirm Password
+                                <Label htmlFor="password2" className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
+                                    Confirm
                                 </Label>
                                 <div className="relative">
                                     <Input
@@ -234,8 +318,7 @@ export default function Register() {
                                         name="password2"
                                         type={showConfirmPassword ? "text" : "password"}
                                         required
-                                        placeholder="••••••••"
-                                        className="h-12 pl-4 pr-12 bg-white border-slate-200 rounded-xl text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:ring-teal-500/20 focus:ring-4 transition-all duration-200 shadow-sm hover:border-slate-300"
+                                        className="input-skeuo px-4 pr-10"
                                         autoComplete="new-password"
                                         value={formData.password2}
                                         onChange={handleChange}
@@ -243,7 +326,7 @@ export default function Register() {
                                     <button
                                         type="button"
                                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                                     >
                                         {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                     </button>
@@ -252,124 +335,111 @@ export default function Register() {
                         </div>
 
                         {/* Terms Checkbox */}
-                        <div className="flex items-start gap-3 pt-2">
-                            <input
-                                type="checkbox"
-                                id="terms"
-                                required
-                                className="mt-1 h-5 w-5 rounded border-slate-300 text-teal-500 focus:ring-teal-500 cursor-pointer"
-                            />
-                            <label htmlFor="terms" className="text-sm text-slate-600 leading-relaxed cursor-pointer">
-                                I agree to the <a href="#" className="text-teal-600 font-medium hover:text-teal-700 hover:underline">Terms of Service</a> and <a href="#" className="text-teal-600 font-medium hover:text-teal-700 hover:underline">Privacy Policy</a>
+                        <div className="flex items-start gap-3 pt-2 ml-1">
+                            <div className="relative flex items-center h-5">
+                                <input
+                                    type="checkbox"
+                                    id="terms"
+                                    required
+                                    className="peer h-4 w-4 appearance-none rounded border-0 bg-[#EFF6FF] shadow-skeuo-inset-sm checked:bg-teal-500 checked:shadow-skeuo-sm transition-all cursor-pointer"
+                                />
+                                <CheckIcon className="absolute w-3 h-3 left-0.5 top-0.5 text-white opacity-0 peer-checked:opacity-100 pointer-events-none" />
+                            </div>
+                            <label htmlFor="terms" className="text-xs text-slate-500 leading-relaxed cursor-pointer select-none">
+                                By continuing, you agree to the <a href="#" className="text-teal-600 font-bold hover:underline">Terms of Service</a>.
                             </label>
                         </div>
 
                         {/* Submit Button */}
-                        <Button 
-                            type="submit" 
-                            className="w-full h-13 bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white font-semibold rounded-xl shadow-lg shadow-teal-500/25 hover:shadow-xl hover:shadow-teal-500/30 transition-all duration-300 group mt-2"
+                        <Button
+                            type="submit"
+                            className="w-full btn-skeuo-primary h-14 mt-6 text-lg shadow-skeuo-md hover:shadow-skeuo-floating"
                             disabled={isLoading}
                         >
                             {isLoading ? (
-                                <Loader2 className="h-5 w-5 animate-spin" />
+                                <Loader2 className="h-6 w-6 animate-spin mx-auto" />
                             ) : (
-                                <>
-                                    Create Account
-                                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                                </>
+                                <span className="flex items-center justify-center gap-2">
+                                    Create Account <ArrowRight className="ml-2 h-5 w-5" />
+                                </span>
                             )}
                         </Button>
                     </form>
 
                     {/* Sign In Link */}
-                    <p className="mt-8 text-center text-slate-600">
-                        Already have an account?{" "}
-                        <a href="/accounts/login/" className="text-teal-600 font-semibold hover:text-teal-700 transition-colors">
-                            Sign in
-                        </a>
-                    </p>
-
-                    {/* Footer */}
-                    <p className="mt-6 text-center text-sm text-slate-500">
-                        © 2026 HealthTrack+. All rights reserved.
-                    </p>
+                    <div className="mt-8 text-center">
+                        <p className="text-slate-500 text-sm font-medium">
+                            Already have an account?{" "}
+                            <Link to="/login" className="text-teal-600 font-bold hover:underline decoration-2 underline-offset-4">
+                                Login here
+                            </Link>
+                        </p>
+                    </div>
                 </div>
             </div>
 
             {/* Right: Visual Section */}
-            <div className="hidden lg:flex lg:w-[50%] relative overflow-hidden">
-                {/* Gradient Background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
-                
-                {/* Animated Gradient Orbs */}
-                <div className="absolute top-1/4 -left-20 w-96 h-96 bg-teal-500/30 rounded-full blur-3xl animate-pulse" />
-                <div className="absolute bottom-1/4 right-0 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
-                
-                {/* Grid Pattern Overlay */}
-                <div className="absolute inset-0 opacity-[0.03]" style={{
-                    backgroundImage: `linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px)`,
-                    backgroundSize: '50px 50px'
-                }} />
+            <div className="hidden lg:flex lg:w-[45%] relative overflow-hidden bg-[#EFF6FF] items-center justify-center border-l border-white">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 bg-grid opacity-[0.03] pointer-events-none"></div>
 
-                {/* Content */}
-                <div className="relative z-10 flex flex-col justify-center h-full p-12 xl:p-16">
-                    {/* Badge */}
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 mb-8 w-fit">
-                        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                        <span className="text-sm font-medium text-white/90">Join 50,000+ users today</span>
-                    </div>
-                    
-                    <h2 className="text-4xl xl:text-5xl font-bold text-white leading-tight mb-6">
-                        Start Your
-                        <br />
-                        <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
-                            Health Journey
-                        </span>
+                {/* Visuals */}
+                <div className="absolute top-[10%] right-[10%] w-64 h-64 bg-teal-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+                <div className="absolute bottom-[10%] left-[10%] w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+
+                <div className="relative z-10 w-full max-w-md p-10">
+                    <h2 className="text-5xl font-black text-slate-800 mb-8 leading-tight">
+                        Join the <br />
+                        <span className="text-teal-600">Network.</span>
                     </h2>
-                    
-                    <p className="text-lg text-slate-300 max-w-md leading-relaxed mb-10">
-                        Join thousands who have transformed their health management with our comprehensive platform.
-                    </p>
 
-                    {/* Feature Cards */}
-                    <div className="space-y-4">
-                        {[
-                            { icon: Zap, title: "Smart Tracking", desc: "AI-powered health insights", color: "from-amber-500 to-orange-500" },
-                            { icon: Shield, title: "Secure Storage", desc: "Bank-grade encryption", color: "from-cyan-500 to-blue-500" },
-                            { icon: Users, title: "Family Health", desc: "Manage profiles for loved ones", color: "from-violet-500 to-purple-500" },
-                        ].map((feature, index) => (
-                            <div 
-                                key={index}
-                                className="flex items-center gap-4 p-4 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-all duration-300 group"
-                            >
-                                <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                                    <feature.icon className="h-6 w-6 text-white" />
-                                </div>
-                                <div>
-                                    <h3 className="text-white font-semibold">{feature.title}</h3>
-                                    <p className="text-slate-400 text-sm">{feature.desc}</p>
-                                </div>
-                                <CheckCircle2 className="h-5 w-5 text-emerald-400 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                    {/* Mini Bento Grid */}
+                    <div className="grid grid-cols-1 gap-6">
+                        <div className="card-skeuo p-6 flex items-start gap-4">
+                            <div className="h-12 w-12 rounded-xl bg-[#EFF6FF] shadow-skeuo-sm flex items-center justify-center text-yellow-500">
+                                <Zap className="h-6 w-6" />
                             </div>
-                        ))}
+                            <div>
+                                <h3 className="text-slate-800 font-bold text-lg mb-1">Smart Tracking</h3>
+                                <p className="text-sm text-slate-500">AI-powered analytics for real-time health insights.</p>
+                            </div>
+                        </div>
+
+                        <div className="card-skeuo p-6 flex items-start gap-4">
+                            <div className="h-12 w-12 rounded-xl bg-[#EFF6FF] shadow-skeuo-sm flex items-center justify-center text-emerald-500">
+                                <Shield className="h-6 w-6" />
+                            </div>
+                            <div>
+                                <h3 className="text-slate-800 font-bold text-lg mb-1">Bank-Grade Security</h3>
+                                <p className="text-sm text-slate-500">AES-256 encryption for all your medical data.</p>
+                            </div>
+                        </div>
+
+                        <div className="card-skeuo p-6 flex items-start gap-4">
+                            <div className="h-12 w-12 rounded-xl bg-[#EFF6FF] shadow-skeuo-sm flex items-center justify-center text-blue-500">
+                                <Users className="h-6 w-6" />
+                            </div>
+                            <div>
+                                <h3 className="text-slate-800 font-bold text-lg mb-1">Family Protocol</h3>
+                                <p className="text-sm text-slate-500">Manage up to 5 sub-accounts effortlessly.</p>
+                            </div>
+                        </div>
                     </div>
 
-                    {/* Stats */}
-                    <div className="mt-10 pt-8 border-t border-white/10 grid grid-cols-3 gap-6">
-                        {[
-                            { value: "50K+", label: "Active Users" },
-                            { value: "99.9%", label: "Uptime" },
-                            { value: "4.9★", label: "User Rating" },
-                        ].map((stat, index) => (
-                            <div key={index} className="text-center">
-                                <div className="text-2xl font-bold text-white">{stat.value}</div>
-                                <div className="text-sm text-slate-400">{stat.label}</div>
-                            </div>
-                        ))}
+                    <div className="mt-12 flex justify-between text-[10px] font-bold font-mono text-slate-400 tracking-widest uppercase">
+                        <span>System: Secure</span>
+                        <span>HIPAA Compliant</span>
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
+    )
+}
+
+function CheckIcon(props: React.SVGProps<SVGSVGElement>) {
+    return (
+        <svg {...props} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
     )
 }
