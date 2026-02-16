@@ -64,9 +64,9 @@ export default function Login() {
             } else {
                 setError(data.error || "Login failed")
             }
-        } catch (err) {
-            setError("Network error. Please try again.")
-            console.error(err)
+        } catch (err: any) {
+            console.error("Login Error Details:", err)
+            setError(err.message || "Network error. Check console for details.")
         } finally {
             setIsLoading(false)
         }
