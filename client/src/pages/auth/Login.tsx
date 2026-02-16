@@ -17,8 +17,20 @@ export default function Login() {
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
+        // Get CSRF token from cookie
         const token = getCookie("csrftoken")
-        if (token) setCsrfToken(token)
+        if (token) {
+            setCsrfToken(token)
+        } else {
+            // If no CSRF token, fetch it from the server
+            fetch(`${API_URL}/accounts/api/login/`, {
+                method: 'GET',
+                credentials: 'include'
+            }).then(() => {
+                const newToken = getCookie("csrftoken")
+                if (newToken) setCsrfToken(newToken)
+            }).catch(console.error)
+        }
     }, [])
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -33,6 +45,7 @@ export default function Login() {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': csrfToken
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     username: (e.target as any).username.value,
                     password: (e.target as any).password.value
