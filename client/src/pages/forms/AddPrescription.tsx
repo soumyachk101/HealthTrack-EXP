@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getCookie } from "@/lib/csrf"
 import { Loader2, FileText } from "lucide-react"
+import { API_URL } from "@/config"
 
 export default function AddPrescription() {
     const [isLoading, setIsLoading] = useState(false)
@@ -18,7 +19,6 @@ export default function AddPrescription() {
     }, [])
 
     const navigate = useNavigate()
-    const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()

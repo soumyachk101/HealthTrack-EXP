@@ -6,6 +6,7 @@ import { getCookie } from "@/lib/csrf"
 import { Loader2, Eye, EyeOff, Mail, Lock, ArrowRight, User, Stethoscope, Building2, Activity, AlertCircle } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
 import { cn } from "@/lib/utils"
+import { API_URL } from "@/config"
 
 export default function Login() {
     const navigate = useNavigate()
@@ -14,8 +15,6 @@ export default function Login() {
     const [showPassword, setShowPassword] = useState(false)
     const [role, setRole] = useState<'patient' | 'doctor' | 'provider'>('patient')
     const [error, setError] = useState<string | null>(null)
-
-    const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
 
     useEffect(() => {
         const token = getCookie("csrftoken")

@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label"
 import { getCookie } from "@/lib/csrf"
 import { Loader2, ShieldCheck, ArrowLeft, AlertCircle, CheckCircle2, Zap } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { API_URL } from "@/config"
 
 export default function VerifyOTP() {
     const navigate = useNavigate()
@@ -14,8 +15,6 @@ export default function VerifyOTP() {
     const [otp, setOtp] = useState<string>("")
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState<string | null>(null)
-
-    const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
 
     useEffect(() => {
         const token = getCookie("csrftoken")

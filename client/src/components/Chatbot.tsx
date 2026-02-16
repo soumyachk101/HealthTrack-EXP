@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { X, Send, Sparkles, Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { API_URL } from '@/config';
 
 type Message = {
     id: string;
@@ -169,7 +170,6 @@ const Chatbot: React.FC = () => {
         setIsLoading(true);
 
         try {
-            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
             const response = await fetch(`${API_URL}/chatbot/api/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

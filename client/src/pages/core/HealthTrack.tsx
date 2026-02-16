@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card"
 import { Activity, Plus, Heart, Droplet, Weight, Wind, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Link, useNavigate } from "react-router-dom"
+import { API_URL } from "@/config"
 
 interface HealthRecord {
     recorded_at: string
@@ -36,7 +37,6 @@ export default function HealthTrack() {
             }
 
             try {
-                const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
                 const response = await fetch(`${API_URL}/api/health-track/`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,

@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Pill, Plus, Clock, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Link, useNavigate } from "react-router-dom"
+import { API_URL } from "@/config"
 
 interface Medicine {
     name: string
@@ -35,7 +36,6 @@ export default function Medicines() {
             }
 
             try {
-                const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
                 const response = await fetch(`${API_URL}/api/medicines/`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,

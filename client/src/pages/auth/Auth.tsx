@@ -6,6 +6,7 @@ import { Loader2, Sparkles, CheckCircle2, Eye, EyeOff, Mail, Lock, User, MapPin,
 import { cn } from "@/lib/utils"
 // import { getCookie } from "@/lib/csrf" // Not needed for JWT
 import { useNavigate } from "react-router-dom"
+import { API_URL } from "@/config"
 
 type AuthMode = "login" | "register"
 
@@ -35,8 +36,6 @@ export default function Auth() {
         const { name, value } = e.target
         setFormData(prev => ({ ...prev, [name]: value }))
     }
-
-    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000"
 
     // Debug logging
     useEffect(() => {
