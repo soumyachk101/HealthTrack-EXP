@@ -179,7 +179,7 @@ export default function Landing() {
 
                     <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed font-medium px-4 md:px-0">
                         Experience the feel of premium healthcare.
-                        <span className="md:mx-2 px-3 md:px-4 py-1 rounded-xl bg-[#EFF6FF] shadow-skeuo-sm text-slate-600 border border-white/50 text-base md:text-lg font-semibold inline-block hover:scale-105 transition-transform cursor-default my-2 md:my-0">Tactile</span>
+                        <span className="md:mx-2 px-3 md:px-4 py-1 rounded-xl bg-[#EFF6FF] shadow-skeuo-sm text-slate-600 border border-white/50 text-base md:text-lg font-semibold inline-block cursor-default my-2 md:my-0">Tactile</span>
                         tracking for your body and mind.
                     </p>
 
