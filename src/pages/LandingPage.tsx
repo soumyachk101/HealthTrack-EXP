@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
-    Shield, Activity, ArrowRight, Pill, Brain, Menu, X
+    Activity, ArrowRight, Pill, Brain, Menu, X
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, useTransform, useSpring } from 'framer-motion'
@@ -323,23 +323,6 @@ export default function Landing() {
                             </div>
                         </div>
                     ))}
-                </div>
-            </section>
-
-            {/* TRUST */}
-            <section className="py-20 md:py-24 border-t border-slate-200 bg-[#EFF6FF] relative overflow-hidden">
-                <div className="container mx-auto px-4 text-center relative z-10">
-                    <div className="inline-block px-6 md:px-8 py-3 md:py-4 rounded-3xl shadow-skeuo-inset-md bg-[#EFF6FF]">
-                        <h2 className="text-lg md:text-2xl font-bold text-slate-400 uppercase tracking-widest">Trusted by Institutions</h2>
-                    </div>
-
-                    <div className="flex flex-wrap justify-center gap-8 md:gap-24 mt-12 md:mt-16 opacity-40 grayscale mix-blend-multiply px-6">
-                        {['Mayo Clinic', 'Johns Hopkins', 'Cleveland Clinic', 'NHS'].map((brand, i) => (
-                            <div key={i} className="text-lg md:text-2xl font-black flex items-center gap-2 text-slate-800">
-                                <Shield className="w-6 h-6 md:w-8 md:h-8" /> {brand}
-                            </div>
-                        ))}
-                    </div>
                 </div>
             </section>
 
