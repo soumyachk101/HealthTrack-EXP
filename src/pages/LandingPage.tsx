@@ -149,7 +149,7 @@ export default function Landing() {
             </header>
 
             {/* HERO */}
-            <section className="relative pt-48 pb-32 z-10 min-h-screen flex flex-col justify-center items-center text-center px-4">
+            <section className="relative pt-24 md:pt-48 pb-16 md:pb-32 z-10 min-h-[calc(100vh-5rem)] md:min-h-screen flex flex-col justify-start md:justify-center items-center text-center px-4">
 
                 {/* DECORATIVE BACKGROUND ELEMENTS (Skeuomorphic Shapes) */}
                 <div className="absolute top-40 left-[10%] w-32 h-32 rounded-full bg-[#EFF6FF] shadow-skeuo-md opacity-60 animate-blob-float"></div>
@@ -159,14 +159,14 @@ export default function Landing() {
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="max-w-4xl mx-auto space-y-10"
+                    className="max-w-4xl mx-auto space-y-6 md:space-y-10"
                 >
                     <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-[#EFF6FF] shadow-skeuo-inset-sm border-b border-white/50 mb-4 cursor-default">
                         <span className="flex h-3 w-3 rounded-full bg-teal-500 shadow-[2px_2px_4px_#cdcaca,-2px_-2px_4px_#ffffff]"></span>
                         <span className="text-xs font-bold uppercase tracking-widest text-slate-500">System Online v2.5</span>
                     </div>
 
-                    <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight text-slate-800 leading-[1.2] md:leading-[1.1] drop-shadow-sm">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black tracking-tight text-slate-800 leading-[1.2] md:leading-[1.1] drop-shadow-sm">
                         Design Your <br />
                         <span className="text-teal-600 relative inline-block">
                             Health Future
@@ -177,28 +177,28 @@ export default function Landing() {
                         </span>
                     </h1>
 
-                    <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed font-medium px-4 md:px-0">
+                    <p className="text-base sm:text-lg md:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed font-medium px-4 md:px-0">
                         Experience the feel of premium healthcare.
-                        <span className="md:mx-2 px-3 md:px-4 py-1 rounded-xl bg-[#EFF6FF] shadow-skeuo-sm text-slate-600 border border-white/50 text-base md:text-lg font-semibold inline-block cursor-default my-2 md:my-0">Tactile</span>
+                        <span className="font-semibold text-teal-600 mx-1">Tactile</span>
                         tracking for your body and mind.
                     </p>
 
-                    <div className="pt-8 flex flex-col sm:flex-row justify-center gap-4 sm:gap-8 items-center w-full px-6">
+                    <div className="pt-6 md:pt-8 flex flex-col sm:flex-row justify-center gap-3 sm:gap-6 md:gap-8 items-center w-full px-4 sm:px-6">
                         <Link to="/register" className="w-full sm:w-auto">
-                            <button className="btn-skeuo-primary text-base md:text-lg px-8 md:px-10 py-3.5 md:py-4 w-full sm:min-w-[200px] flex items-center justify-center gap-3 group">
+                            <button className="btn-skeuo-primary text-sm md:text-base lg:text-lg px-6 md:px-8 lg:px-10 py-3 md:py-3.5 lg:py-4 w-full sm:min-w-[200px] flex items-center justify-center gap-2 md:gap-3 group">
                                 Patient Sign Up
-                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
                             </button>
                         </Link>
 
-                        <div className="flex gap-4 w-full sm:w-auto justify-center">
+                        <div className="flex gap-3 sm:gap-4 w-full sm:w-auto justify-center">
                             <Link to="/register?role=doctor" className="flex-1 sm:flex-none">
-                                <button className="btn-skeuo text-sm w-full sm:w-auto">
+                                <button className="btn-skeuo text-xs sm:text-sm w-full sm:w-auto px-4 md:px-6 py-3">
                                     Doctor Join
                                 </button>
                             </Link>
                             <Link to="/register?role=provider" className="flex-1 sm:flex-none">
-                                <button className="btn-skeuo text-sm w-full sm:w-auto">
+                                <button className="btn-skeuo text-xs sm:text-sm w-full sm:w-auto px-4 md:px-6 py-3">
                                     Provider Join
                                 </button>
                             </Link>
@@ -209,7 +209,7 @@ export default function Landing() {
                 {/* 3D FLOATING MOCKUP - SKEUOMORPHIC TABLET */}
                 <motion.div
                     style={{ rotateX, rotateY, perspective: 1000 }}
-                    className="mt-20 md:mt-32 w-full max-w-5xl mx-auto relative group z-20 px-4"
+                    className="mt-12 sm:mt-16 md:mt-20 lg:mt-32 w-full max-w-5xl mx-auto relative group z-20 px-4"
                 >
                     <motion.div
                         initial={{ opacity: 0, scale: 0.8, rotateX: 20 }}
@@ -229,7 +229,7 @@ export default function Landing() {
                                         <div className="w-2 md:w-3 h-2 md:h-3 rounded-full bg-green-400 shadow-sm"></div>
                                     </div>
                                     <div className="flex-1 flex justify-center">
-                                        <div className="w-32 md:w-64 h-6 md:h-10 bg-[#EFF6FF] rounded-lg shadow-skeuo-inset-sm flex items-center justify-center text-[10px] md:text-xs text-slate-400 font-bold tracking-wide">HEALTH_TRACK_OS</div>
+                                        <div className="w-40 sm:w-48 md:w-64 h-6 md:h-10 bg-[#EFF6FF] rounded-lg shadow-skeuo-inset-sm flex items-center justify-center text-[11px] sm:text-xs md:text-xs text-slate-400 font-bold tracking-wide">HEALTH_TRACK_OS</div>
                                     </div>
                                 </div>
 
