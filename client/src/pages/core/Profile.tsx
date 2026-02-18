@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { User, Mail, Phone, MapPin, Heart, AlertCircle, Save } from "lucide-react"
 import { useNavigate } from "react-router-dom"
-import { API_URL } from "@/config"
 
 interface ProfileData {
     csrf_token: string
@@ -42,6 +41,7 @@ export default function Profile() {
             }
 
             try {
+                const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
                 const response = await fetch(`${API_URL}/api/profile/`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,

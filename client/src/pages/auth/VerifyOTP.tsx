@@ -5,24 +5,28 @@ import { Label } from "@/components/ui/label"
 import { getCookie } from "@/lib/csrf"
 import { Loader2, ShieldCheck, ArrowLeft, AlertCircle, CheckCircle2, Zap } from "lucide-react"
 import { useNavigate } from "react-router-dom"
-import { API_URL } from "@/config"
 
 export default function VerifyOTP() {
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(false)
     const [csrfToken, setCsrfToken] = useState<string>("")
-    const [email, setEmail] = useState<string>("")
-    const [otp, setOtp] = useState<string>("")
+    const [email, setEmail] = useState('')
+    const [otp, setOtp] = useState('')
+    const [otpType, setOtpType] = useState('register')
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState<string | null>(null)
+
+    const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
 
     useEffect(() => {
         const token = getCookie("csrftoken")
         if (token) setCsrfToken(token)
 
-        // Try to get email from localStorage or previous state
+        // Try to get email and type from localStorage
         const storedEmail = localStorage.getItem("verification_email")
+        const storedType = localStorage.getItem("verification_type") || "register"
         if (storedEmail) setEmail(storedEmail)
+        if (storedType) setOtpType(storedType)
     }, [])
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -38,23 +42,78 @@ export default function VerifyOTP() {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': csrfToken
                 },
-                body: JSON.stringify({ otp })
+                credentials: 'include',
+                body: JSON.stringify({
+                    otp,
+                    email,
+                    otp_type: otpType
+                })
             })
 
             const data = await response.json()
 
             if (data.success) {
                 setSuccess(data.message || "Verified successfully!")
-                // Store token if returned
+                // Clear verification data
+                localStorage.removeItem('verification_email')
+                localStorage.removeItem('verification_type')
+
+                // Store token and user info
                 if (data.token) {
                     localStorage.setItem('token', data.token)
-                    if (data.user) localStorage.setItem('user', JSON.stringify(data.user))
                 }
+
+                let targetPath = '/dashboard';
+                if (data.user) {
+                    localStorage.setItem('user', JSON.stringify(data.user))
+
+                    // Determine redirect path based on role
+                    if (data.user.role === 'doctor') {
+                        targetPath = '/doctor-dashboard';
+                    } else if (data.user.role === 'provider') {
+                        targetPath = '/provider-dashboard';
+                    }
+                }
+
                 setTimeout(() => {
-                    navigate('/login')
+                    navigate(targetPath)
                 }, 1500)
             } else {
                 setError(data.error || "Verification failed. Invalid code.")
+            }
+        } catch (err) {
+            setError("Network error. Please try again.")
+            console.error(err)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const handleResend = async () => {
+        setError(null)
+        setSuccess(null)
+        setIsLoading(true)
+
+        try {
+            const response = await fetch(`${API_URL}/accounts/api/resend-otp/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    email,
+                    otp_type: otpType
+                })
+            })
+
+            const data = await response.json()
+
+            if (data.success) {
+                setSuccess(data.message || "A new code has been sent!")
+            } else {
+                setError(data.error || "Failed to resend code.")
             }
         } catch (err) {
             setError("Network error. Please try again.")
@@ -113,7 +172,7 @@ export default function VerifyOTP() {
 
                         <div className="space-y-2">
                             <Label htmlFor="otp" className="text-xs font-mono font-bold text-slate-500 uppercase tracking-wider text-center block">
-                                Authentication_Code
+                                Authentication Code
                             </Label>
                             <div className="relative group">
                                 <div className="absolute transition-all duration-300 opacity-20 group-focus-within:opacity-100 -inset-0.5 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-lg blur opacity-30 group-hover:opacity-100"></div>
@@ -149,14 +208,23 @@ export default function VerifyOTP() {
                     <div className="mt-8 pt-6 border-t border-slate-100 flex flex-col gap-4 text-center text-sm">
                         <p className="text-slate-500">
                             No code received?{" "}
-                            <a href="/accounts/register/" className="text-teal-600 font-bold hover:underline hover:text-teal-700">
-                                Resend_Packet
-                            </a>
+                            <button
+                                type="button"
+                                onClick={handleResend}
+                                disabled={isLoading}
+                                className="text-teal-600 font-bold hover:underline hover:text-teal-700 disabled:opacity-50"
+                            >
+                                Resend Code
+                            </button>
                         </p>
-                        <a href="/accounts/register/" className="flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors text-xs font-mono uppercase tracking-wider group">
+                        <button
+                            type="button"
+                            onClick={() => navigate('/login')}
+                            className="flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors text-xs font-mono uppercase tracking-wider group"
+                        >
                             <ArrowLeft className="mr-1 h-3 w-3 group-hover:-translate-x-1 transition-transform" />
-                            Return to Initialization
-                        </a>
+                            Return to Login
+                        </button>
                     </div>
                 </div>
 

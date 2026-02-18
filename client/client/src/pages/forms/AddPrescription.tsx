@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { Sidebar } from "@/components/layout/Sidebar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -6,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getCookie } from "@/lib/csrf"
 import { Loader2, FileText } from "lucide-react"
+import { API_URL } from "@/config"
 
 export default function AddPrescription() {
     const [isLoading, setIsLoading] = useState(false)
@@ -16,8 +18,40 @@ export default function AddPrescription() {
         if (token) setCsrfToken(token)
     }, [])
 
-    const handleSubmit = () => {
+    const navigate = useNavigate()
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
         setIsLoading(true)
+
+        const formData = new FormData(e.currentTarget)
+        // Check if file is empty, if so remove it so backend doesn't complain if expecting a file object (though my backend allows null)
+        const fileInput = formData.get('document') as File
+        if (fileInput && fileInput.size === 0) {
+            formData.delete('document')
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/core/api/prescriptions/add/`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'X-CSRFToken': csrfToken
+                    // Content-Type not set, let browser handle boundary for FormData
+                },
+                body: formData
+            })
+
+            if (response.ok) {
+                navigate('/prescriptions')
+            } else {
+                console.error("Failed to add prescription")
+            }
+        } catch (error) {
+            console.error("Error adding prescription:", error)
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (

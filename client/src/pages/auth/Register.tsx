@@ -7,7 +7,6 @@ import { getCookie } from "@/lib/csrf"
 import { Loader2, User, Mail, MapPin, Lock, Eye, EyeOff, ArrowRight, Sparkles, Shield, Zap, Users, Stethoscope, Building2 } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
 import { cn } from "@/lib/utils"
-import { API_URL } from "@/config"
 
 export default function Register() {
     const navigate = useNavigate()
@@ -26,6 +25,8 @@ export default function Register() {
         password2: "",
         role: "patient" // Default role
     })
+
+    const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
 
     useEffect(() => {
         const token = getCookie("csrftoken")
@@ -57,6 +58,7 @@ export default function Register() {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': csrfToken
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     username: formData.username,
                     email: formData.email,
@@ -70,7 +72,13 @@ export default function Register() {
             const data = await response.json()
 
             if (data.success) {
-                // Store token if needed, or just redirect to login
+                if (data.otp_required) {
+                    localStorage.setItem('verification_email', formData.email)
+                    localStorage.setItem('verification_type', 'register')
+                    navigate('/verify-otp')
+                    return
+                }
+                // Store token if needed
                 localStorage.setItem('token', data.token)
                 navigate('/dashboard')
             } else {

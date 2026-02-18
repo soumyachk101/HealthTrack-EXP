@@ -3,7 +3,6 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Heart, Droplet, Weight, Activity, Pill, Moon, Plus, FileText } from "lucide-react"
 import { useNavigate, Link } from "react-router-dom"
-import { API_URL } from "@/config"
 
 // Define interfaces for data passed from API
 interface DashboardData {
@@ -52,6 +51,7 @@ export default function Dashboard() {
             }
 
             try {
+                const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
                 const response = await fetch(`${API_URL}/api/dashboard/`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,

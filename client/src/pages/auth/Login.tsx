@@ -6,7 +6,6 @@ import { getCookie } from "@/lib/csrf"
 import { Loader2, Eye, EyeOff, Mail, Lock, ArrowRight, User, Stethoscope, Building2, Activity, AlertCircle } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
 import { cn } from "@/lib/utils"
-import { API_URL } from "@/config"
 
 export default function Login() {
     const navigate = useNavigate()
@@ -16,21 +15,11 @@ export default function Login() {
     const [role, setRole] = useState<'patient' | 'doctor' | 'provider'>('patient')
     const [error, setError] = useState<string | null>(null)
 
+    const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
+
     useEffect(() => {
-        // Get CSRF token from cookie
         const token = getCookie("csrftoken")
-        if (token) {
-            setCsrfToken(token)
-        } else {
-            // If no CSRF token, fetch it from the server
-            fetch(`${API_URL}/accounts/api/login/`, {
-                method: 'GET',
-                credentials: 'include'
-            }).then(() => {
-                const newToken = getCookie("csrftoken")
-                if (newToken) setCsrfToken(newToken)
-            }).catch(console.error)
-        }
+        if (token) setCsrfToken(token)
     }, [])
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -55,6 +44,12 @@ export default function Login() {
             const data = await response.json()
 
             if (data.success) {
+                if (data.otp_required) {
+                    localStorage.setItem('verification_email', (e.target as any).username.value)
+                    localStorage.setItem('verification_type', 'login')
+                    navigate('/verify-otp')
+                    return
+                }
                 localStorage.setItem('token', data.token)
                 // Store user info if needed
                 if (data.user) {
@@ -64,9 +59,9 @@ export default function Login() {
             } else {
                 setError(data.error || "Login failed")
             }
-        } catch (err: any) {
-            console.error("Login Error Details:", err)
-            setError(err.message || "Network error. Check console for details.")
+        } catch (err) {
+            setError("Network error. Please try again.")
+            console.error(err)
         } finally {
             setIsLoading(false)
         }
@@ -194,10 +189,10 @@ export default function Login() {
                             <div className="space-y-2">
                                 <div className="flex justify-between items-center ml-1">
                                     <Label htmlFor="password" className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                                        Password_Key
+                                        Password
                                     </Label>
                                     <Link to="/accounts/password_reset/" className="text-xs font-bold text-teal-600 hover:text-teal-700">
-                                        Forgot Key?
+                                        Forgot Password?
                                     </Link>
                                 </div>
                                 <div className="relative">
@@ -265,9 +260,9 @@ export default function Login() {
                     <p className="text-center text-xs font-mono text-slate-400 uppercase tracking-widest opacity-60">
                         Secure Connection • 256-bit Encryption
                     </p>
-                </div>
-            </div>
-        </div>
+                </div >
+            </div >
+        </div >
     )
 }
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import { Sidebar } from "@/components/layout/Sidebar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -6,6 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { getCookie } from "@/lib/csrf"
 import { Loader2, Pill } from "lucide-react"
+import { API_URL } from "@/config"
 
 export default function AddMedicine() {
     const [isLoading, setIsLoading] = useState(false)
@@ -16,8 +18,36 @@ export default function AddMedicine() {
         if (token) setCsrfToken(token)
     }, [])
 
-    const handleSubmit = () => {
+    const navigate = useNavigate()
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
         setIsLoading(true)
+
+        const formData = new FormData(e.currentTarget)
+        const data = Object.fromEntries(formData.entries())
+
+        try {
+            const response = await fetch(`${API_URL}/core/api/medicines/add/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(data)
+            })
+
+            if (response.ok) {
+                navigate('/medicines')
+            } else {
+                console.error("Failed to add medicine")
+            }
+        } catch (error) {
+            console.error("Error adding medicine:", error)
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (

@@ -3,13 +3,11 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import './index.css'
 import Chatbot from './components/Chatbot'
-import DebugNetwork from './components/DebugNetwork'
 
 // Lazy load pages for performance
 const Login = React.lazy(() => import('./pages/auth/Login'))
 const Register = React.lazy(() => import('./pages/auth/Register'))
 const VerifyOTP = React.lazy(() => import('./pages/auth/VerifyOTP'))
-const DebugAPI = React.lazy(() => import('./pages/auth/DebugAPI'))
 const Landing = React.lazy(() => import('./pages/LandingPage'))
 
 const Dashboard = React.lazy(() => import('./pages/core/Dashboard'))
@@ -37,7 +35,6 @@ const PageLoader = () => (
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <DebugNetwork />
     <BrowserRouter>
       <Suspense fallback={<PageLoader />}>
         <Routes>
@@ -45,7 +42,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/verify-otp" element={<VerifyOTP />} />
-          <Route path="/debug-api" element={<DebugAPI />} />
 
           {/* Core Features */}
           <Route path="/dashboard" element={<Dashboard />} />

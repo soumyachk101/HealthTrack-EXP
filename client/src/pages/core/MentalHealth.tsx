@@ -4,7 +4,6 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Smile, List, CalendarCheck, Plus, Bed, Clock } from "lucide-react"
-import { API_URL } from "@/config"
 
 interface MentalHealthLog {
     recorded_at: string
@@ -36,6 +35,7 @@ export default function MentalHealth() {
             }
 
             try {
+                const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
                 const response = await fetch(`${API_URL}/api/mental-health/`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
