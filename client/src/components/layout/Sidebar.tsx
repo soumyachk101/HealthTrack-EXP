@@ -16,10 +16,10 @@ export function Sidebar({ className, items = navItems }: SidebarProps) {
         <aside className={`fixed left-0 top-0 h-screen w-64 border-r border-border bg-white hidden lg:flex flex-col shadow-sm ${className || ''}`}>
             <div className="p-6 border-b border-border/50">
                 <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-lg flex items-center justify-center">
-                        <img src="/logo.svg" alt="HealthTrack Logo" className="h-8 w-8" />
+                    <div className="flex items-center justify-center w-full">
+                        <img src="/Logo.png" alt="HealthTrack Logo" className="h-[28px] w-auto object-contain" />
                     </div>
-                    <span className="font-bold tracking-tight text-foreground text-lg">HealthTrack+</span>
+                    {/* <span className="font-bold tracking-tight text-foreground text-lg">HealthTrack+</span> */}
                 </div>
             </div>
 

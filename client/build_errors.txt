@@ -1,0 +1,16 @@
+
+> frontend@0.0.0 build
+> tsc -b && vite build
+
+src/pages/auth/Login.tsx(2,1): error TS6133: 'Button' is declared but its value is never read.
+src/pages/auth/Login.tsx(3,1): error TS6133: 'Input' is declared but its value is never read.
+src/pages/auth/Login.tsx(4,1): error TS6133: 'Label' is declared but its value is never read.
+src/pages/auth/Login.tsx(6,19): error TS6133: 'Eye' is declared but its value is never read.
+src/pages/auth/Login.tsx(6,24): error TS6133: 'EyeOff' is declared but its value is never read.
+src/pages/auth/Login.tsx(6,42): error TS6133: 'Stethoscope' is declared but its value is never read.
+src/pages/auth/Login.tsx(6,55): error TS6133: 'Building2' is declared but its value is never read.
+src/pages/auth/Login.tsx(6,66): error TS6133: 'User' is declared but its value is never read.
+src/pages/auth/Login.tsx(15,12): error TS6133: 'showPassword' is declared but its value is never read.
+src/pages/auth/Login.tsx(15,26): error TS6133: 'setShowPassword' is declared but its value is never read.
+src/pages/auth/Login.tsx(104,56): error TS2345: Argument of type 'string' is not assignable to parameter of type 'SetStateAction<"patient" | "doctor" | "provider">'.
+src/pages/LandingPage.tsx(4,69): error TS6133: 'ChevronRight' is declared but its value is never read.

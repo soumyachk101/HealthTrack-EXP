@@ -154,16 +154,16 @@ export default function Dashboard() {
             {/* Bento Grid Layout */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 {stats.map((stat) => (
-                    <Card key={stat.label} className="border-border/50 bg-card/50 backdrop-blur">
+                    <Card key={stat.label} className="skeuo-surface shadow-skeuo-inset-sm">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
+                            <CardTitle className="text-sm font-bold text-[#20B2AA]/80">{stat.label}</CardTitle>
                             <div className={`p-2 rounded-full ${stat.bg} ${stat.color}`}>
                                 <stat.icon className="h-4 w-4" />
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold animate-in fade-in slide-in-from-bottom-2">{stat.value}</div>
-                            <p className="text-xs text-muted-foreground mt-1">{stat.status}</p>
+                            <div className="text-2xl font-black text-[#173836] animate-in fade-in slide-in-from-bottom-2">{stat.value}</div>
+                            <p className="text-xs font-semibold text-[#20B2AA]/60 mt-1">{stat.status}</p>
                         </CardContent>
                     </Card>
                 ))}
@@ -172,57 +172,57 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Wellness Overview */}
                 <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Card className="border-border/50 bg-card/50">
+                    <Card className="skeuo-surface shadow-skeuo-inset-sm">
                         <CardHeader className="flex flex-row items-center space-y-0 pb-2 gap-4">
-                            <div className="p-2 rounded-full bg-violet-500/10 text-violet-500">
+                            <div className="p-2 rounded-full bg-[#20B2AA]/10 text-[#0F827A]">
                                 <Pill className="h-5 w-5" />
                             </div>
                             <div>
-                                <CardTitle className="text-base">Active Medicines</CardTitle>
-                                <p className="text-xs text-muted-foreground">Currently taking</p>
+                                <CardTitle className="text-base font-bold text-[#173836]">Active Medicines</CardTitle>
+                                <p className="text-xs font-semibold text-[#20B2AA]/60">Currently taking</p>
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold">{activeMeds}</div>
+                            <div className="text-3xl font-black text-[#173836]">{activeMeds}</div>
                         </CardContent>
                     </Card>
-                    <Card className="border-border/50 bg-card/50">
+                    <Card className="skeuo-surface shadow-skeuo-inset-sm">
                         <CardHeader className="flex flex-row items-center space-y-0 pb-2 gap-4">
                             <div className="p-2 rounded-full bg-indigo-500/10 text-indigo-500">
                                 <Moon className="h-5 w-5" />
                             </div>
                             <div>
-                                <CardTitle className="text-base">Sleep Hours</CardTitle>
-                                <p className="text-xs text-muted-foreground">Last night</p>
+                                <CardTitle className="text-base font-bold text-[#173836]">Sleep Hours</CardTitle>
+                                <p className="text-xs font-semibold text-[#20B2AA]/60">Last night</p>
                             </div>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold">
-                                {hasVal(sleepHours) ? sleepHours : "--"} <span className="text-base font-normal text-muted-foreground">hrs</span>
+                            <div className="text-3xl font-black text-[#173836]">
+                                {hasVal(sleepHours) ? sleepHours : "--"} <span className="text-base font-bold text-[#20B2AA]/80">hrs</span>
                             </div>
                         </CardContent>
                     </Card>
 
                     {/* Recent Activity */}
-                    <Card className="col-span-1 md:col-span-2 border-border/50 bg-card/50">
+                    <Card className="col-span-1 md:col-span-2 skeuo-surface shadow-skeuo-inset-sm">
                         <CardHeader>
-                            <CardTitle>Recent Activity</CardTitle>
+                            <CardTitle className="font-bold text-[#173836]">Recent Activity</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
                                 {data.recent_activities && data.recent_activities.length > 0 ? (
                                     data.recent_activities.map((activity, i) => (
-                                        <div key={i} className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                                            <div className="h-2 w-2 rounded-full bg-primary" />
+                                        <div key={i} className="flex items-center gap-4 p-3 rounded-xl bg-[#FDFBF7] shadow-skeuo-inset-md border border-white/50 transition-colors">
+                                            <div className="h-2 w-2 rounded-full bg-[#20B2AA]" />
                                             <div className="flex-1">
-                                                <p className="text-sm font-medium">{activity.action_display}</p>
-                                                <p className="text-xs text-muted-foreground">{activity.details}</p>
+                                                <p className="text-sm font-bold text-[#173836]">{activity.action_display}</p>
+                                                <p className="text-xs font-semibold text-[#20B2AA]/80">{activity.details}</p>
                                             </div>
-                                            <span className="text-xs text-muted-foreground">{activity.created_at_since} ago</span>
+                                            <span className="text-xs font-bold text-[#20B2AA]/60">{activity.created_at_since} ago</span>
                                         </div>
                                     ))
                                 ) : (
-                                    <p className="text-sm text-muted-foreground">No recent activity</p>
+                                    <p className="text-sm font-semibold text-[#20B2AA]/60">No recent activity</p>
                                 )}
                             </div>
                         </CardContent>
@@ -231,7 +231,7 @@ export default function Dashboard() {
 
                 {/* Quick Actions */}
                 <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">Quick Actions</h3>
+                    <h3 className="text-lg font-extrabold text-[#173836] drop-shadow-sm">Quick Actions</h3>
                     {[
                         { label: "Add Health Record", href: "/add-health-record", icon: Plus },
                         { label: "Add Medicine", href: "/add-medicine", icon: Pill },
@@ -240,12 +240,12 @@ export default function Dashboard() {
                         <Link
                             key={action.label}
                             to={action.href}
-                            className="flex items-center gap-4 p-4 rounded-xl border border-border bg-card hover:bg-accent transition-all group shadow-sm hover:shadow-md"
+                            className="flex items-center gap-4 p-4 rounded-xl skeuo-surface hover:shadow-skeuo-sm transition-all group group-active:scale-95"
                         >
-                            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                            <div className="h-10 w-10 rounded-full bg-[#FDFBF7] shadow-skeuo-inset-sm border border-white/50 flex items-center justify-center text-[#20B2AA] group-hover:text-[#0F827A] transition-colors">
                                 <action.icon className="h-5 w-5" />
                             </div>
-                            <span className="font-medium">{action.label}</span>
+                            <span className="font-bold text-[#173836]">{action.label}</span>
                         </Link>
                     ))}
                 </div>

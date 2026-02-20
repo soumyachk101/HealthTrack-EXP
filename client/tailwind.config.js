@@ -61,6 +61,14 @@ export default {
                 // SKEUOMORPHIC SHADOWS (Light Source: Top Left)
                 // Base: #EFF6FF (Light Blue/Grey)
 
+                'skeuo-primary': '5px 5px 10px #e4e2de, -5px -5px 10px #ffffff, inset 2px 2px 5px rgba(255, 255, 255, 0.4), inset -2px -2px 5px rgba(0, 100, 100, 0.2)',
+                'skeuo-primary-active': 'inset 4px 4px 8px rgba(0, 100, 100, 0.3), inset -4px -4px 8px rgba(255, 255, 255, 0.2)',
+
+                // Ultra-Premium Phase 6
+                'skeuo-premium': '10px 10px 20px #d8d6d1, -10px -10px 20px #ffffff, inset 1px 1px 2px rgba(255, 255, 255, 0.8), inset -1px -1px 2px rgba(0, 0, 0, 0.05)',
+                'skeuo-premium-inset': 'inset 6px 6px 12px #d8d6d1, inset -6px -6px 12px #ffffff',
+                'skeuo-premium-focus': 'inset 4px 4px 8px #d8d6d1, inset -4px -4px 8px #ffffff, 0 0 0 2px rgba(32, 178, 170, 0.3)',
+
                 // Standard Raised Element (Card, Container)
                 'skeuo-sm': '5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff',
                 'skeuo-md': '8px 8px 16px #d1d9e6, -8px -8px 16px #ffffff',
@@ -89,11 +97,16 @@ export default {
                     '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
                     '33%': { transform: 'translate(30px, -30px) scale(1.1)' },
                     '66%': { transform: 'translate(-20px, 20px) scale(0.9)' }
+                },
+                'skeuo-pulse': {
+                    '0%, 100%': { transform: 'scale(1)', boxShadow: '10px 10px 20px #d8d6d1, -10px -10px 20px #ffffff, inset 1px 1px 2px rgba(255, 255, 255, 0.8), inset -1px -1px 2px rgba(0, 0, 0, 0.05)' },
+                    '50%': { transform: 'scale(1.02) translateY(-2px)', boxShadow: '15px 15px 30px #d8d6d1, -15px -15px 30px #ffffff, inset 2px 2px 4px rgba(255, 255, 255, 0.9), inset -2px -2px 4px rgba(0, 0, 0, 0.08)' }
                 }
             },
             animation: {
                 'glow-subtle': 'glow-subtle 4s ease-in-out infinite',
-                'blob-float': 'blob-float 7s infinite'
+                'blob-float': 'blob-float 7s infinite',
+                'skeuo-pulse': 'skeuo-pulse 3s ease-in-out infinite'
             }
         },
     },

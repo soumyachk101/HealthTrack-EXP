@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { DashboardLayout } from "@/components/layout/DashboardLayout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { User, Mail, Phone, MapPin, Heart, AlertCircle, Save } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
@@ -94,59 +93,59 @@ export default function Profile() {
     return (
         <DashboardLayout>
             <header className="mb-8">
-                <h1 className="text-3xl font-bold tracking-tight text-primary">My Profile</h1>
-                <p className="text-muted-foreground mt-1">Manage your personal information</p>
+                <h1 className="text-3xl font-extrabold tracking-tight text-[#173836]">My Profile</h1>
+                <p className="text-[#20B2AA]/80 font-semibold mt-1">Manage your personal information</p>
             </header>
 
             <form onSubmit={handleSave}>
-                <Card className="border-border shadow-sm">
-                    <CardHeader>
-                        <CardTitle className="text-xl flex items-center gap-2">
-                            <User className="h-5 w-5 text-primary" />
+                <Card className="skeuo-surface shadow-skeuo-inset-sm border-0">
+                    <CardHeader className="p-6 sm:p-8">
+                        <CardTitle className="text-xl font-extrabold flex items-center gap-2 text-[#173836]">
+                            <User className="h-5 w-5 text-[#20B2AA]" />
                             Personal Details
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-6">
+                    <CardContent className="space-y-6 px-6 sm:px-8 pb-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">First Name</label>
-                                <Input name="first_name" defaultValue={data?.user.first_name} />
+                                <label className="text-sm font-bold text-[#173836]">First Name</label>
+                                <input type="text" className="input-skeuo w-full h-11 px-4 text-sm font-medium outline-none border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA]/20 transition-all rounded-xl" name="first_name" defaultValue={data?.user.first_name} />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-medium">Last Name</label>
-                                <Input name="last_name" defaultValue={data?.user.last_name} />
+                                <label className="text-sm font-bold text-[#173836]">Last Name</label>
+                                <input type="text" className="input-skeuo w-full h-11 px-4 text-sm font-medium outline-none border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA]/20 transition-all rounded-xl" name="last_name" defaultValue={data?.user.last_name} />
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium flex items-center gap-2">
-                                    <Mail className="h-4 w-4 text-muted-foreground" /> Email
+                                <label className="text-sm font-bold flex items-center gap-2 text-[#173836]">
+                                    <Mail className="h-4 w-4 text-[#20B2AA]/60" /> Email
                                 </label>
-                                <Input defaultValue={data?.user.email} disabled className="bg-muted text-muted-foreground cursor-not-allowed" />
+                                <input type="email" className="input-skeuo w-full h-11 px-4 text-sm font-medium outline-none transition-all rounded-xl opacity-70 cursor-not-allowed bg-[#FDFBF7]" defaultValue={data?.user.email} disabled />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-medium flex items-center gap-2">
-                                    <Phone className="h-4 w-4 text-muted-foreground" /> Phone
+                                <label className="text-sm font-bold flex items-center gap-2 text-[#173836]">
+                                    <Phone className="h-4 w-4 text-[#20B2AA]/60" /> Phone
                                 </label>
-                                <Input name="phone" type="tel" defaultValue={data?.user.phone} />
+                                <input type="tel" className="input-skeuo w-full h-11 px-4 text-sm font-medium outline-none border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA]/20 transition-all rounded-xl" name="phone" defaultValue={data?.user.phone} />
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium flex items-center gap-2">
-                                    <MapPin className="h-4 w-4 text-muted-foreground" /> City
+                                <label className="text-sm font-bold flex items-center gap-2 text-[#173836]">
+                                    <MapPin className="h-4 w-4 text-[#20B2AA]/60" /> City
                                 </label>
-                                <Input name="city" defaultValue={data?.user.city} />
+                                <input type="text" className="input-skeuo w-full h-11 px-4 text-sm font-medium outline-none border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA]/20 transition-all rounded-xl" name="city" defaultValue={data?.user.city} />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-medium flex items-center gap-2">
-                                    <Heart className="h-4 w-4 text-destructive" /> Blood Group
+                                <label className="text-sm font-bold flex items-center gap-2 text-[#173836]">
+                                    <Heart className="h-4 w-4 text-rose-500" /> Blood Group
                                 </label>
                                 <select
                                     name="blood_group"
-                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    className="input-skeuo w-full h-11 px-4 text-sm font-medium outline-none border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA]/20 transition-all rounded-xl appearance-none bg-no-repeat bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%208l5%205%205-5%22%20stroke%3D%22%2320B2AA%22%20stroke-width%3D%222%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E')] bg-[position:right_12px_center]"
                                     defaultValue={data?.user.blood_group}
                                 >
                                     <option value="">Select Blood Group</option>
@@ -163,33 +162,33 @@ export default function Profile() {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium">Address</label>
+                            <label className="text-sm font-bold text-[#173836]">Address</label>
                             <textarea
                                 name="address"
-                                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                className="input-skeuo w-full min-h-[80px] p-4 text-sm font-medium outline-none border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA]/20 transition-all rounded-xl resize-y"
                                 defaultValue={data?.user.address}
                             />
                         </div>
 
-                        <div className="pt-4 border-t border-border">
-                            <h3 className="text-lg font-semibold mb-4 text-primary">Emergency Contact</h3>
+                        <div className="pt-6 mt-2 border-t border-slate-200/50">
+                            <h3 className="text-lg font-extrabold mb-6 text-[#173836]">Emergency Contact</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium">Name</label>
-                                    <Input name="emergency_contact" defaultValue={data?.user.emergency_contact} />
+                                    <label className="text-sm font-bold text-[#173836]">Name</label>
+                                    <input type="text" className="input-skeuo w-full h-11 px-4 text-sm font-medium outline-none border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA]/20 transition-all rounded-xl" name="emergency_contact" defaultValue={data?.user.emergency_contact} />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium">Phone</label>
-                                    <Input name="emergency_phone" type="tel" defaultValue={data?.user.emergency_phone} />
+                                    <label className="text-sm font-bold text-[#173836]">Phone</label>
+                                    <input type="tel" className="input-skeuo w-full h-11 px-4 text-sm font-medium outline-none border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA]/20 transition-all rounded-xl" name="emergency_phone" defaultValue={data?.user.emergency_phone} />
                                 </div>
                             </div>
                         </div>
 
-                        <div className="pt-4 flex justify-end">
-                            <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
+                        <div className="pt-8 flex justify-end">
+                            <button type="submit" className="btn-skeuo-primary h-11 px-6 text-sm flex items-center justify-center gap-2">
                                 <Save className="h-4 w-4" />
                                 Save Changes
-                            </Button>
+                            </button>
                         </div>
                     </CardContent>
                 </Card>

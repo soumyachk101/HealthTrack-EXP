@@ -1,19 +1,24 @@
 import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { getCookie } from "@/lib/csrf"
-import { Loader2, Eye, EyeOff, Mail, Lock, ArrowRight, User, Stethoscope, Building2, Activity, AlertCircle } from "lucide-react"
-import { Link, useNavigate } from "react-router-dom"
+import { ArrowRight, Activity, Loader2 } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 import { cn } from "@/lib/utils"
+import { motion } from "framer-motion"
+import { getCookie } from "@/lib/csrf"
 
 export default function Login() {
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(false)
     const [csrfToken, setCsrfToken] = useState<string>("")
-    const [showPassword, setShowPassword] = useState(false)
+    // Set dummy credentials as requested
+    const [formData, setFormData] = useState({ username: "soumyachk1@gmail.com", password: "Soumya@933" })
     const [role, setRole] = useState<'patient' | 'doctor' | 'provider'>('patient')
     const [error, setError] = useState<string | null>(null)
+
+    // Assuming formData and handleChange are defined elsewhere or need to be added
+    // For now, I'll add dummy ones to make the code syntactically correct based on usage
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
     const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
 
@@ -51,7 +56,6 @@ export default function Login() {
                     return
                 }
                 localStorage.setItem('token', data.token)
-                // Store user info if needed
                 if (data.user) {
                     localStorage.setItem('user', JSON.stringify(data.user))
                 }
@@ -67,209 +71,130 @@ export default function Login() {
         }
     }
 
-    const getRoleIcon = () => {
-        switch (role) {
-            case 'doctor': return <Stethoscope className="h-6 w-6 text-teal-600" />
-            case 'provider': return <Building2 className="h-6 w-6 text-teal-600" />
-            default: return <User className="h-6 w-6 text-teal-600" />
-        }
-    }
-
-    const getRoleTitle = () => {
-        switch (role) {
-            case 'doctor': return "Doctor Portal"
-            case 'provider': return "Provider Portal"
-            default: return "Patient Portal"
-        }
-    }
-
     return (
-        <div className="min-h-screen flex bg-[#EFF6FF] text-slate-700 font-sans selection:bg-teal-200 selection:text-teal-900 relative overflow-hidden">
-            {/* TEXTURE OVERLAY */}
-            <div className="bg-texture"></div>
+        <div className="min-h-screen bg-[url('/bg-grid.svg')] bg-[#FDFBF7] bg-grid-pattern selection:bg-[#20B2AA]/20 selection:text-[#0F827A] flex items-center justify-center p-4 py-12 md:p-8">
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, ease: "easeOut" }}
+                className="w-full max-w-6xl mx-auto rounded-[3rem] skeuo-premium-surface overflow-hidden flex flex-col md:flex-row relative z-10"
+            >
+                {/* Left Side: Form Area */}
+                <div className="w-full md:w-1/2 p-8 sm:p-12 lg:p-16 relative flex flex-col justify-center">
 
-            {/* Left: Decoration Side (Desktop) */}
-            <div className="hidden lg:flex lg:w-[50%] relative items-center justify-center p-12">
-                {/* Floating Elements */}
-                <div className="absolute top-[20%] left-[20%] w-32 h-32 rounded-full bg-[#EFF6FF] shadow-skeuo-md animate-blob-float opacity-80"></div>
-                <div className="absolute bottom-[20%] right-[20%] w-40 h-40 rounded-full bg-[#EFF6FF] shadow-skeuo-convex animate-blob-float opacity-60" style={{ animationDelay: '-2s' }}></div>
-
-                <div className="relative z-10 max-w-lg">
-                    <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-[#EFF6FF] shadow-skeuo-inset-sm border-b border-white/50 mb-8">
-                        <span className="flex h-3 w-3 rounded-full bg-teal-500 shadow-[2px_2px_4px_#cdcaca,-2px_-2px_4px_#ffffff] animate-pulse"></span>
-                        <span className="text-xs font-bold uppercase tracking-widest text-slate-500">Secure Access v2.5</span>
+                    <div className="mb-12 flex flex-col items-start relative z-10">
+                        <img src="/Logo.png" alt="HealthTrack Logo" className="h-8 mb-8 drop-shadow-sm cursor-pointer hover:scale-105 transition-transform" onClick={() => navigate('/')} />
+                        <h1 className="text-4xl md:text-5xl font-black text-[#173836] mb-3 tracking-tighter">
+                            Welcome Back.
+                        </h1>
+                        <p className="text-[#173836]/60 text-lg font-medium">
+                            Enter your credentials to access your terminal.
+                        </p>
                     </div>
 
-                    <h1 className="text-6xl font-black text-slate-800 tracking-tight leading-tight mb-6">
-                        Welcome <br />
-                        <span className="text-teal-600">Back.</span>
-                    </h1>
-
-                    <p className="text-xl text-slate-500 leading-relaxed font-medium">
-                        Access your comprehensive health dashboard.
-                        <span className="block mt-4 p-4 rounded-2xl bg-[#EFF6FF] shadow-skeuo-sm border border-white/50 text-sm">
-                            <Activity className="inline-block w-4 h-4 mr-2 text-teal-500" />
-                            Real-time vitals synchronization active.
-                        </span>
-                    </p>
-                </div>
-            </div>
-
-            {/* Right: Form Section */}
-            <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 relative">
-                {/* Mobile Background Deco */}
-                <div className="absolute inset-0 lg:hidden pointer-events-none">
-                    <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-teal-500/10 rounded-full blur-3xl"></div>
-                </div>
-
-                <div className="w-full max-w-md space-y-8">
-
-                    {/* Card Container */}
-                    <div className="card-skeuo relative z-10">
-                        {/* Header */}
-                        <div className="text-center mb-10">
-                            <div className="mx-auto w-20 h-20 rounded-2xl bg-[#EFF6FF] shadow-skeuo-floating flex items-center justify-center mb-6 border border-white">
-                                {getRoleIcon()}
-                            </div>
-                            <h2 className="text-3xl font-bold text-slate-800">{getRoleTitle()}</h2>
-                            <p className="mt-2 text-slate-500 font-medium">Enter your credentials to access the system.</p>
-                        </div>
-
-                        {/* Role Switcher */}
-                        <div className="grid grid-cols-3 gap-3 p-2 rounded-2xl bg-[#EFF6FF] shadow-skeuo-inset-sm mb-8 border-b border-white/50">
-                            {(['patient', 'doctor', 'provider'] as const).map((r) => (
-                                <button
-                                    key={r}
-                                    type="button"
-                                    onClick={() => setRole(r)}
-                                    className={cn(
-                                        "flex flex-col items-center justify-center gap-1 py-3 rounded-xl text-xs font-bold transition-all duration-200 uppercase tracking-wide",
-                                        role === r
-                                            ? "bg-[#EFF6FF] text-teal-600 shadow-skeuo-sm scale-[0.98] border border-white/60"
-                                            : "text-slate-400 hover:text-slate-600 hover:bg-[#EFF6FF]/50"
-                                    )}
-                                >
-                                    {r === 'patient' && <User className="h-4 w-4" />}
-                                    {r === 'doctor' && <Stethoscope className="h-4 w-4" />}
-                                    {r === 'provider' && <Building2 className="h-4 w-4" />}
-                                    {r.charAt(0).toUpperCase() + r.slice(1)}
-                                </button>
-                            ))}
-                        </div>
-
-                        {/* Form */}
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            {error && (
-                                <div className="p-3 rounded-lg bg-red-50 text-red-600 text-sm border border-red-100 flex items-center gap-2">
-                                    <AlertCircle className="h-4 w-4 shrink-0" />
-                                    <span>{error}</span>
-                                </div>
-                            )}
-                            <input type="hidden" name="role" value={role} />
-
-                            <div className="space-y-2">
-                                <Label htmlFor="username" className="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">
-                                    Email or Username
-                                </Label>
-                                <div className="relative">
-                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                                        <Mail className="h-5 w-5" />
-                                    </div>
-                                    <Input
-                                        id="username"
-                                        name="username"
-                                        type="text"
-                                        required
-                                        className="input-skeuo pl-12"
-                                        autoComplete="username"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <div className="flex justify-between items-center ml-1">
-                                    <Label htmlFor="password" className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                                        Password
-                                    </Label>
-                                    <Link to="/accounts/password_reset/" className="text-xs font-bold text-teal-600 hover:text-teal-700">
-                                        Forgot Password?
-                                    </Link>
-                                </div>
-                                <div className="relative">
-                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                                        <Lock className="h-5 w-5" />
-                                    </div>
-                                    <Input
-                                        id="password"
-                                        name="password"
-                                        type={showPassword ? "text" : "password"}
-                                        required
-                                        className="input-skeuo pl-12 pr-12"
-                                        autoComplete="current-password"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-                                    >
-                                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center ml-1">
-                                <div className="relative flex items-center">
-                                    <input
-                                        id="remember"
-                                        name="remember"
-                                        type="checkbox"
-                                        className="peer h-5 w-5 appearance-none rounded-md border-0 bg-[#EFF6FF] shadow-skeuo-inset-sm checked:bg-teal-500 checked:shadow-skeuo-sm transition-all cursor-pointer"
-                                    />
-                                    <CheckIcon className="absolute w-3.5 h-3.5 left-0.5 top-0.5 text-white opacity-0 peer-checked:opacity-100 pointer-events-none" />
-                                </div>
-                                <label htmlFor="remember" className="ml-3 text-sm text-slate-600 font-bold cursor-pointer select-none">
-                                    Keep session active
-                                </label>
-                            </div>
-
-                            <Button
-                                type="submit"
-                                className="w-full btn-skeuo-primary h-14 text-lg shadow-skeuo-md hover:shadow-skeuo-floating"
-                                disabled={isLoading}
-                            >
-                                {isLoading ? (
-                                    <Loader2 className="h-6 w-6 animate-spin mx-auto" />
-                                ) : (
-                                    <span className="flex items-center justify-center gap-2">
-                                        Authenticate <ArrowRight className="h-5 w-5" />
-                                    </span>
+                    <div className="flex bg-[#FDFBF7] p-2 rounded-[1.5rem] shadow-skeuo-premium-inset mb-10 relative z-10 border-t-2 border-l-2 border-white/60 border-b border-r border-[#d8d6d1]/20">
+                        {['patient', 'doctor', 'provider'].map((r) => (
+                            <button
+                                key={r}
+                                type="button"
+                                onClick={() => setRole(r as "patient" | "doctor" | "provider")}
+                                className={cn(
+                                    "flex-1 py-3 text-sm font-bold rounded-xl capitalize transition-all duration-300",
+                                    role === r
+                                        ? "bg-white text-[#0F827A] shadow-skeuo-premium border border-white/60"
+                                        : "text-[#173836]/50 hover:text-[#0F827A] hover:bg-white/30"
                                 )}
-                            </Button>
-                        </form>
-
-                        <div className="mt-8 pt-8 border-t border-slate-200">
-                            <p className="text-center text-slate-500 font-medium">
-                                No account found? {" "}
-                                <Link to="/register" className="text-teal-600 font-bold hover:underline decoration-2 underline-offset-4">
-                                    Create Profile
-                                </Link>
-                            </p>
-                        </div>
+                            >
+                                {r}
+                            </button>
+                        ))}
                     </div>
 
-                    <p className="text-center text-xs font-mono text-slate-400 uppercase tracking-widest opacity-60">
-                        Secure Connection • 256-bit Encryption
-                    </p>
-                </div >
-            </div >
-        </div >
-    )
-}
+                    {error && (
+                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-4 mb-8 text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-2xl font-semibold shadow-sm text-center">
+                            {error}
+                        </motion.div>
+                    )}
 
-function CheckIcon(props: React.SVGProps<SVGSVGElement>) {
-    return (
-        <svg {...props} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-        </svg>
+                    <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+                        <div className="space-y-2">
+                            <label className="text-sm font-bold text-[#173836] ml-2 uppercase tracking-wider text-xs">Email or Username</label>
+                            <input
+                                name="username"
+                                type="text"
+                                placeholder="Enter your username"
+                                value={formData.username}
+                                onChange={handleChange}
+                                className="input-skeuo-premium"
+                                required
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between ml-2 mr-2">
+                                <label className="text-sm font-bold text-[#173836] uppercase tracking-wider text-xs">Password</label>
+                                <a href="#" className="text-sm font-bold text-[#20B2AA] hover:text-[#0F827A] transition-colors">Forgot Password?</a>
+                            </div>
+                            <input
+                                name="password"
+                                type="password"
+                                placeholder="••••••••"
+                                value={formData.password}
+                                onChange={handleChange}
+                                className="input-skeuo-premium"
+                                required
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="w-full btn-skeuo-primary h-16 mt-8 flex items-center justify-center gap-2 text-lg uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98]"
+                        >
+                            {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : "Authenticate"}
+                            {!isLoading && <ArrowRight className="w-5 h-5 opacity-80" />}
+                        </button>
+
+                        <div className="text-center mt-8">
+                            <span className="text-[#173836]/60 font-medium">Don't have an account? </span>
+                            <a href="/register" className="text-[#20B2AA] font-bold hover:text-[#0F827A] transition-colors">Apply for Access</a>
+                        </div>
+                    </form>
+                </div>
+
+                {/* Right Side: Visual Branding Area */}
+                <div className="hidden md:flex w-1/2 bg-[#20B2AA] relative overflow-hidden flex-col items-center justify-center p-12 lg:p-20 text-center">
+                    {/* Inner Skeuomorphic Shadow for depth separation */}
+                    <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-black/10 to-transparent z-10 pointer-events-none"></div>
+
+                    {/* Dynamic Lighting Background */}
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,0.4),transparent)] z-0 mix-blend-overlay"></div>
+                    <div className="absolute inset-0 bg-[#0F827A]/30 mix-blend-multiply"></div>
+
+                    {/* Premium Graphic Element */}
+                    <motion.div
+                        initial={{ scale: 0.9, rotate: -5 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ duration: 1, delay: 0.2 }}
+                        className="relative mx-auto w-64 h-64 lg:w-80 lg:h-80 mb-12 z-10"
+                    >
+                        <div className="absolute inset-0 bg-[#173836]/20 rounded-[3rem] blur-2xl transform translate-y-8"></div>
+                        <div className="relative w-full h-full bg-[#FDFBF7] border-4 border-white/40 rounded-[3rem] shadow-[20px_20px_40px_rgba(0,0,0,0.2),-10px_-10px_30px_rgba(255,255,255,0.3)] flex items-center justify-center hover:scale-105 transition-transform duration-700 ease-out group">
+                            <Activity className="w-24 h-24 lg:w-32 lg:h-32 text-[#20B2AA] drop-shadow-lg group-hover:scale-110 transition-transform duration-500" />
+                        </div>
+                    </motion.div>
+
+                    <div className="space-y-6 relative z-10">
+                        <h2 className="text-4xl lg:text-5xl font-black text-white tracking-tight drop-shadow-md">
+                            HealthTrack OS <br />
+                            <span className="text-[#FDFBF7]/90 font-medium text-3xl">Ultimate Edition</span>
+                        </h2>
+                        <p className="text-white/80 leading-relaxed text-lg lg:text-xl font-medium max-w-md mx-auto">
+                            Experience the pinnacle of hospital administration and telemetry integration.
+                        </p>
+                    </div>
+                </div>
+            </motion.div>
+        </div>
     )
 }

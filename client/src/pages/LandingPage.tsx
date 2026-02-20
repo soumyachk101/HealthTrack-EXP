@@ -1,355 +1,310 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
-    Activity, ArrowRight, Pill, Brain, Menu, X
+    Activity, ArrowRight, Shield, Brain, Menu, X, Pill, HeartPulse
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { motion, useTransform, useSpring } from 'framer-motion'
-
-// --- Magnetic Button Component ---
-
-
-// --- Card Stack Item ---
-
+import { motion } from 'framer-motion'
 
 export default function Landing() {
     const [scrolled, setScrolled] = useState(false)
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-    // Smooth Mouse parallax (kept subtle for skeuo)
-    const mouseX = useSpring(0, { stiffness: 50, damping: 20 });
-    const mouseY = useSpring(0, { stiffness: 50, damping: 20 });
-
     useEffect(() => {
-        const handleScroll = () => setScrolled(window.scrollY > 50)
-        const handleMouseMove = (e: MouseEvent) => {
-            const { clientX, clientY } = e;
-            const centerX = window.innerWidth / 2;
-            const centerY = window.innerHeight / 2;
-            mouseX.set((clientX - centerX) / centerX);
-            mouseY.set((clientY - centerY) / centerY);
-        }
-
+        const handleScroll = () => setScrolled(window.scrollY > 20)
         window.addEventListener('scroll', handleScroll)
-        window.addEventListener('mousemove', handleMouseMove)
-        return () => {
-            window.removeEventListener('scroll', handleScroll)
-            window.removeEventListener('mousemove', handleMouseMove)
-        }
+        return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
-    const rotateX = useTransform(mouseY, [-1, 1], [5, -5]); // Reduced rotation for cleaner look
-    const rotateY = useTransform(mouseX, [-1, 1], [-5, 5]);
-
-    // Features Data - Skeuomorphic Icons & Colors
     const features = [
         {
-            icon: Activity,
-            title: "Precision Vitals",
-            desc: "Medical-grade accuracy for monitoring your body's most critical signals in real-time.",
-            points: ["Heart Rate Variance", "Blood Oxygen (SpO2)", "Sleep Architecture"],
-            color: "text-teal-600",
+            icon: HeartPulse,
+            title: "Real-time Telemetry",
+            desc: "Continuous monitoring of vitals with millisecond precision and historical trend analysis.",
+            color: "text-rose-500",
+            bg: "bg-rose-500/10",
         },
         {
             icon: Pill,
-            title: "Smart Regimen",
-            desc: "An intelligent assistant that manages your entire medication schedule and inventory.",
-            points: ["Interaction Warnings", "Refill Predictions", "Family Sharing"],
-            color: "text-blue-600",
+            title: "Automated Regimens",
+            desc: "Smart prediction and management of medical inventory with active interaction safeguards.",
+            color: "text-teal-600",
+            bg: "bg-teal-600/10",
         },
         {
             icon: Brain,
-            title: "Neuro Insights",
-            desc: "Understanding your mental state through behavioral patterns and AI analysis.",
-            points: ["Mood correlations", "Stress triggers", "Focus metrics"],
-            color: "text-purple-600",
+            title: "Cognitive Insights",
+            desc: "Machine-learning driven correlation between your physiological data and behavioral patterns.",
+            color: "text-amber-500",
+            bg: "bg-amber-500/10",
         },
         {
-            icon: Activity,
-            title: "Vault Security",
-            desc: "Your data is encrypted, decentralized, and yours. We facilitate sharing, we don't own it.",
-            points: ["End-to-end Encryption", "HIPAA Compliant", "Audit Logs"],
-            color: "text-emerald-600",
+            icon: Shield,
+            title: "Bank-Grade Vault",
+            desc: "Your medical history secured by military-grade encryption with decentralized access controls.",
+            color: "text-emerald-500",
+            bg: "bg-emerald-500/10",
         }
     ]
 
     return (
-        <div className="min-h-screen bg-[#EFF6FF] text-slate-700 font-sans selection:bg-teal-200 selection:text-teal-900 overflow-x-hidden relative">
+        <div className="min-h-screen bg-[url('/bg-grid.svg')] bg-[#FDFBF7] bg-grid-pattern selection:bg-[#20B2AA]/20 selection:text-[#0F827A] overflow-x-hidden relative">
 
-            {/* TEXTURE OVERLAY */}
-            <div className="bg-texture"></div>
-
-            {/* NAV - Floating Skeuomorphic Bar */}
-            <header className="fixed top-0 left-0 right-0 z-[100] flex justify-center pt-6 px-4">
-                <motion.nav
-                    initial={{ y: -100, width: "100%" }}
-                    animate={{
-                        y: 0,
-                        width: scrolled ? "min(400px, 100%)" : "min(800px, 100%)",
-                        borderRadius: isMobileMenuOpen ? "2rem 2rem 0 0" : "1.5rem"
-                    }}
-                    transition={{ type: "spring", stiffness: 200, damping: 25 }}
-                    className={cn(
-                        "relative h-16 md:h-20 flex items-center justify-between px-4 md:px-6 transition-all duration-300",
-                        scrolled
-                            ? "bg-[#EFF6FF]/95 backdrop-blur-md shadow-skeuo-md border border-white/50"
-                            : "bg-[#EFF6FF] shadow-skeuo-lg border border-white/50"
-                    )}
-                >
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#EFF6FF] shadow-skeuo-sm flex items-center justify-center text-teal-600 border border-white/50 active:shadow-skeuo-inset-sm transition-shadow cursor-pointer">
-                            <Activity className="w-4 h-4 md:w-5 md:h-5" />
-                        </div>
-                        <span className={cn("font-bold text-slate-700 text-base md:text-lg tracking-tight transition-all duration-300", scrolled ? "md:opacity-0 md:w-0 overflow-hidden" : "opacity-100")}>
-                            HealthTrack<span className="text-teal-500">+</span>
-                        </span>
+            {/* NAV - Skeuomorphic Premium Pill */}
+            <motion.header
+                initial={{ y: -100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.1 }}
+                className="fixed top-6 left-0 right-0 z-[100] flex justify-center px-4 transition-all duration-500"
+            >
+                <nav className={cn(
+                    "relative flex items-center justify-between transition-all duration-500",
+                    scrolled
+                        ? "px-5 py-2.5 w-full max-w-4xl rounded-[2.5rem] bg-[#FDFBF7]/95 shadow-[15px_15px_30px_rgba(0,0,0,0.08),-15px_-15px_30px_rgba(255,255,255,0.8),inset_1px_1px_2px_rgba(255,255,255,0.8)] border border-white/60 backdrop-blur-xl"
+                        : "px-6 py-4 w-full max-w-5xl rounded-[3rem] bg-transparent"
+                )}>
+                    <div className="flex items-center gap-2 group cursor-pointer">
+                        <img src="/Logo.png" alt="HealthTrack Logo" className={cn("w-auto object-contain transition-all duration-500 group-hover:scale-105", scrolled ? "h-[28px]" : "h-[36px]")} />
                     </div>
 
-                    {/* Desktop Menu */}
-                    <div className="hidden md:flex items-center gap-4">
+                    <div className="hidden md:flex items-center gap-4 p-1.5 rounded-[1.5rem]">
                         <Link to="/login">
-                            <button className="btn-skeuo text-sm px-6 py-2.5">
-                                Login
+                            <button className="px-6 py-2.5 rounded-xl font-bold transition-all duration-200 ease-out text-[#173836]/70 hover:text-[#0F827A] hover:bg-white/50">
+                                Sign In
                             </button>
                         </Link>
                         <Link to="/register">
-                            <button className="btn-skeuo-primary text-sm px-6 py-2.5">
+                            <button className="btn-skeuo-primary px-6 py-2.5">
                                 Get Started
                             </button>
                         </Link>
                     </div>
 
-                    {/* Mobile Toggle */}
                     <button
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        className="md:hidden w-10 h-10 rounded-xl bg-[#EFF6FF] shadow-skeuo-sm flex items-center justify-center text-slate-600 border border-white/50 active:shadow-skeuo-inset-sm transition-all"
+                        className="md:hidden w-12 h-12 rounded-2xl bg-[#FDFBF7] shadow-skeuo-premium border border-white/60 flex items-center justify-center text-[#173836] active:shadow-skeuo-premium-inset active:scale-95 transition-all"
                     >
-                        {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                        {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                     </button>
 
-                    {/* Mobile Dropdown */}
                     <motion.div
                         initial={false}
-                        animate={{
-                            height: isMobileMenuOpen ? "auto" : 0,
-                            opacity: isMobileMenuOpen ? 1 : 0
-                        }}
-                        className="absolute top-full left-0 right-0 bg-[#EFF6FF] shadow-skeuo-lg border border-white/50 rounded-b-3xl overflow-hidden md:hidden z-[-1]"
+                        animate={{ height: isMobileMenuOpen ? "auto" : 0, opacity: isMobileMenuOpen ? 1 : 0 }}
+                        className="absolute top-full left-0 right-0 mt-4 overflow-hidden md:hidden rounded-[2.5rem] skeuo-premium-surface"
                     >
-                        <div className="p-6 space-y-4">
-                            <Link to="/login" onClick={() => setIsMobileMenuOpen(false)} className="block">
-                                <button className="btn-skeuo w-full py-4 text-base">Login</button>
+                        <div className="p-4 flex flex-col gap-3">
+                            <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                                <button className="w-full justify-center btn-skeuo">Sign In</button>
                             </Link>
-                            <Link to="/register" onClick={() => setIsMobileMenuOpen(false)} className="block">
-                                <button className="btn-skeuo-primary w-full py-4 text-base">Get Started</button>
+                            <Link to="/register" onClick={() => setIsMobileMenuOpen(false)}>
+                                <button className="w-full justify-center btn-skeuo-primary shadow-md">Get Started</button>
                             </Link>
                         </div>
                     </motion.div>
-                </motion.nav>
-            </header>
+                </nav>
+            </motion.header>
 
-            {/* HERO */}
-            <section className="relative pt-24 md:pt-48 pb-16 md:pb-32 z-10 min-h-[calc(100vh-5rem)] md:min-h-screen flex flex-col justify-start md:justify-center items-center text-center px-4">
+            {/* HERO SECTION */}
+            <section className="relative pt-40 pb-20 md:pt-52 md:pb-32 z-10 min-h-screen flex flex-col justify-center items-center">
+                <div className="container mx-auto px-4">
+                    <div className="max-w-4xl mx-auto text-center space-y-8 relative">
+                        {/* Ultra-Premium Badge */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6 }}
+                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#FDFBF7] shadow-skeuo-premium-inset border-t-2 border-l-2 border-white/60 border-b-2 border-r-2 border-[#d8d6d1]/20 text-[#0F827A] text-sm font-bold mx-auto tracking-wide"
+                        >
+                            <span className="relative flex h-2.5 w-2.5">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#20B2AA] opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#20B2AA] shadow-[0_0_8px_rgba(32,178,170,0.8)]"></span>
+                            </span>
+                            HealthTrack OS v4.0 Ultimate
+                        </motion.div>
 
-                {/* DECORATIVE BACKGROUND ELEMENTS (Skeuomorphic Shapes) */}
-                <div className="absolute top-40 left-[10%] w-32 h-32 rounded-full bg-[#EFF6FF] shadow-skeuo-md opacity-60 animate-blob-float"></div>
-                <div className="absolute top-60 right-[15%] w-24 h-24 rounded-full bg-[#EFF6FF] shadow-skeuo-convex opacity-50 animate-blob-float" style={{ animationDelay: '-2s' }}></div>
+                        <motion.h1
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
+                            className="text-6xl sm:text-7xl md:text-8xl lg:text-[7rem] font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-[#173836] via-[#173836]/90 to-[#20B2AA] leading-[1.05] drop-shadow-sm pb-2"
+                        >
+                            Crystal Clear <br />
+                            Healthcare.
+                        </motion.h1>
 
+                        <motion.p
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.7, delay: 0.2 }}
+                            className="text-lg md:text-2xl text-[#173836]/70 max-w-2xl mx-auto leading-relaxed font-semibold"
+                        >
+                            The unified platform for patients, doctors, and providers. Unparalleled transparency packed in a beautiful interface.
+                        </motion.p>
+
+                        {/* Action Area */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.7, delay: 0.3 }}
+                            className="pt-8 flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-2xl mx-auto bg-[#FDFBF7] shadow-skeuo-premium-inset p-4 rounded-[2.5rem] border-t-2 border-l-2 border-white/60 border-b border-r border-[#d8d6d1]/20"
+                        >
+                            <Link to="/register" className="w-full sm:w-auto flex-1">
+                                <button className="btn-skeuo-primary w-full h-16 text-lg flex items-center justify-center group">
+                                    Patient Sign Up
+                                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                </button>
+                            </Link>
+
+                            <div className="flex w-full sm:w-auto gap-3 flex-1">
+                                <Link to="/register?role=doctor" className="flex-1">
+                                    <button className="btn-skeuo w-full h-16 text-center flex items-center justify-center">
+                                        Doctor
+                                    </button>
+                                </Link>
+                                <Link to="/register?role=provider" className="flex-1">
+                                    <button className="btn-skeuo w-full h-16 text-center flex items-center justify-center">
+                                        Provider
+                                    </button>
+                                </Link>
+                            </div>
+                        </motion.div>
+                    </div>
+                </div>
+
+                {/* Glass Mockup Graphic */}
                 <motion.div
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="max-w-4xl mx-auto space-y-6 md:space-y-10"
+                    transition={{ duration: 1, delay: 0.5 }}
+                    className="mt-28 w-full max-w-6xl mx-auto px-4 relative z-20"
                 >
-                    <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-[#EFF6FF] shadow-skeuo-inset-sm border-b border-white/50 mb-4 cursor-default">
-                        <span className="flex h-3 w-3 rounded-full bg-teal-500 shadow-[2px_2px_4px_#cdcaca,-2px_-2px_4px_#ffffff]"></span>
-                        <span className="text-xs font-bold uppercase tracking-widest text-slate-500">System Online v2.5</span>
+                    <div className="rounded-[3rem] bg-[#FDFBF7] shadow-skeuo-premium border border-white/60 p-4 md:p-6 relative overflow-hidden group animate-blob-float">
+
+                        {/* Shimmer Effect */}
+                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent translate-x-[-150%] group-hover:animate-[shimmer_2s_infinite] transition-all"></div>
+
+                        <div className="rounded-[2.5rem] bg-[#FDFBF7] overflow-hidden shadow-skeuo-premium-inset aspect-[16/9] md:aspect-[21/9] flex flex-col relative border-t-[3px] border-l-[3px] border-white/60 border-b-2 border-r-2 border-[#d8d6d1]/20">
+                            {/* App Header Mock */}
+                            <div className="h-14 bg-[#FDFBF7] border-b border-[#d8d6d1]/30 flex items-center px-6 gap-4 shadow-sm relative z-10">
+                                <div className="flex gap-2">
+                                    <div className="w-3.5 h-3.5 rounded-full bg-rose-400 shadow-skeuo-inset-sm"></div>
+                                    <div className="w-3.5 h-3.5 rounded-full bg-amber-400 shadow-skeuo-inset-sm"></div>
+                                    <div className="w-3.5 h-3.5 rounded-full bg-emerald-400 shadow-skeuo-inset-sm"></div>
+                                </div>
+                                <div className="h-6 w-48 bg-[#FDFBF7] shadow-skeuo-inset-sm rounded-full border border-white/50"></div>
+                            </div>
+
+                            {/* App Content Mock */}
+                            <div className="flex-1 p-6 md:p-8 grid grid-cols-12 gap-6 relative bg-slate-50/30">
+                                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.4),transparent)] -z-10"></div>
+
+                                <div className="col-span-3 space-y-4 hidden md:block">
+                                    <div className="h-40 w-full bg-[#FDFBF7] shadow-skeuo-sm rounded-[1.5rem] border border-white/50 p-4">
+                                        <div className="w-12 h-12 rounded-full bg-[#20B2AA]/20 shadow-skeuo-inset-sm mb-4 border border-white/50"></div>
+                                        <div className="h-4 w-3/4 bg-slate-200/60 shadow-skeuo-inset-sm rounded-full mb-3"></div>
+                                        <div className="h-4 w-1/2 bg-slate-200/60 shadow-skeuo-inset-sm rounded-full"></div>
+                                    </div>
+                                    <div className="h-12 w-full bg-[#FDFBF7] shadow-skeuo-sm rounded-xl border border-white/50"></div>
+                                    <div className="h-12 w-full bg-[#FDFBF7] shadow-skeuo-sm rounded-xl border border-white/50"></div>
+                                </div>
+                                <div className="col-span-12 md:col-span-9 grid grid-cols-3 gap-6">
+                                    <div className="col-span-3 md:col-span-2 bg-[#FDFBF7] shadow-skeuo-sm border border-white/50 rounded-[1.5rem] p-6 h-64 flex flex-col justify-between">
+                                        <div className="flex justify-between items-center mb-6">
+                                            <div className="h-8 w-32 bg-slate-200/60 shadow-skeuo-inset-sm rounded-lg"></div>
+                                            <div className="w-10 h-10 rounded-full bg-[#FDFBF7] shadow-skeuo-sm border border-white/50"></div>
+                                        </div>
+                                        <div className="flex items-end gap-3 h-32">
+                                            {[40, 70, 45, 90, 65, 80, 55].map((h, i) => (
+                                                <div key={i} className="flex-1 bg-slate-100 shadow-skeuo-inset-sm rounded-full relative overflow-hidden border border-white/50">
+                                                    <div style={{ height: `${h}%` }} className="absolute bottom-0 w-full bg-[#20B2AA] rounded-full shadow-inner"></div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div className="col-span-3 md:col-span-1 border border-white/50 bg-[#FDFBF7] shadow-skeuo-sm rounded-[1.5rem] p-6 h-64 flex flex-col items-center justify-center">
+                                        <div className="w-24 h-24 rounded-full border-[6px] border-[#FDFBF7] shadow-skeuo-sm flex items-center justify-center bg-[#FDFBF7] shadow-skeuo-inset-sm relative">
+                                            <svg className="absolute inset-0 w-full h-full transform -rotate-90">
+                                                <circle cx="42" cy="42" r="38" fill="none" stroke="#20B2AA" strokeWidth="6" strokeDasharray="238" strokeDashoffset="47" className="mr-8"></circle>
+                                            </svg>
+                                            <span className="text-2xl font-black text-[#173836]">98%</span>
+                                        </div>
+                                        <div className="h-5 w-24 bg-slate-200/60 shadow-skeuo-inset-sm rounded-full mt-6"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </motion.div>
+            </section >
+
+            {/* FEATURES SECTION (SKEUO BENTO) */}
+            < section className="py-32 md:py-48 relative z-10" >
+                <div className="container mx-auto px-4">
+                    <div className="max-w-3xl mb-20 text-center mx-auto">
+                        <span className="px-5 py-2 rounded-full bg-[#FDFBF7] shadow-skeuo-premium-inset border-t-2 border-l-2 border-white/60 border-b border-r border-[#d8d6d1]/20 text-[#0F827A] font-bold tracking-widest text-xs mb-8 inline-block uppercase">The Engine</span>
+                        <h2 className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-b from-[#173836] to-[#173836]/80 mb-6 tracking-tighter">
+                            Engineered for <span className="text-[#20B2AA]">Scale.</span>
+                        </h2>
                     </div>
 
-                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black tracking-tight text-slate-800 leading-[1.2] md:leading-[1.1] drop-shadow-sm">
-                        Design Your <br />
-                        <span className="text-teal-600 relative inline-block">
-                            Health Future
-                            {/* Underline Highlight */}
-                            <svg className="absolute w-full h-2 md:h-3 -bottom-1 left-0 text-teal-500/20" viewBox="0 0 100 10" preserveAspectRatio="none">
-                                <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
-                            </svg>
-                        </span>
-                    </h1>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        {features.map((feature, idx) => (
+                            <motion.div
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: "-100px" }}
+                                transition={{ delay: idx * 0.1, type: "spring", stiffness: 100 }}
+                                key={idx}
+                                className={cn(
+                                    "p-10 skeuo-premium-surface hover:-translate-y-2 hover:animate-skeuo-pulse transition-all duration-500 group relative overflow-hidden",
+                                    idx === 0 || idx === 3 ? "lg:col-span-2" : "lg:col-span-2"
+                                )}
+                            >
+                                <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                <div className={cn("w-20 h-20 rounded-[1.5rem] flex items-center justify-center mb-8 bg-[#FDFBF7] shadow-skeuo-premium-inset border-t-2 border-l-2 border-white/60 border-b border-r border-[#d8d6d1]/20 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 text-[#0F827A] relative z-10")}>
+                                    <feature.icon className="w-10 h-10 drop-shadow-md" />
+                                </div>
+                                <h3 className="text-3xl font-bold text-[#173836] mb-4 relative z-10 tracking-tight">{feature.title}</h3>
+                                <p className="text-[#173836]/70 leading-relaxed font-medium text-lg relative z-10">
+                                    {feature.desc}
+                                </p>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </section >
 
-                    <p className="text-base sm:text-lg md:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed font-medium px-4 md:px-0">
-                        Experience the feel of premium healthcare.
-                        <span className="font-semibold text-teal-600 mx-1">Tactile</span>
-                        tracking for your body and mind.
-                    </p>
+            {/* CTA SECTION */}
+            < section className="py-32 md:py-48 relative overflow-hidden z-10" >
+                <div className="container mx-auto px-4 relative text-center">
 
-                    <div className="pt-6 md:pt-8 flex flex-col sm:flex-row justify-center gap-3 sm:gap-6 md:gap-8 items-center w-full px-4 sm:px-6">
-                        <Link to="/register" className="w-full sm:w-auto">
-                            <button className="btn-skeuo-primary text-sm md:text-base lg:text-lg px-6 md:px-8 lg:px-10 py-3 md:py-3.5 lg:py-4 w-full sm:min-w-[200px] flex items-center justify-center gap-2 md:gap-3 group">
-                                Patient Sign Up
-                                <ArrowRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
+                    <div className="skeuo-premium-surface p-16 md:p-24 max-w-5xl mx-auto flex flex-col items-center relative overflow-hidden group hover:animate-skeuo-pulse cursor-pointer">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.6),transparent)] opacity-50 group-hover:opacity-80 transition-opacity duration-500"></div>
+
+                        <h2 className="text-5xl md:text-7xl font-black text-[#173836] mb-8 tracking-tighter relative z-10">
+                            Ready for the future?
+                        </h2>
+                        <p className="text-2xl md:text-3xl text-[#173836]/70 max-w-3xl mx-auto mb-12 font-medium relative z-10">
+                            Join thousands of patients and practitioners already inside the network.
+                        </p>
+                        <Link to="/register" className="relative z-10">
+                            <button className="btn-skeuo-primary px-14 h-20 text-2xl flex items-center justify-center rounded-[1.5rem] shadow-[10px_10px_20px_#d8d6d1,-10px_-10px_20px_#ffffff] hover:scale-105 transition-all duration-300">
+                                Create Free Account
                             </button>
                         </Link>
-
-                        <div className="flex gap-3 sm:gap-4 w-full sm:w-auto justify-center">
-                            <Link to="/register?role=doctor" className="flex-1 sm:flex-none">
-                                <button className="btn-skeuo text-xs sm:text-sm w-full sm:w-auto px-4 md:px-6 py-3">
-                                    Doctor Join
-                                </button>
-                            </Link>
-                            <Link to="/register?role=provider" className="flex-1 sm:flex-none">
-                                <button className="btn-skeuo text-xs sm:text-sm w-full sm:w-auto px-4 md:px-6 py-3">
-                                    Provider Join
-                                </button>
-                            </Link>
-                        </div>
                     </div>
-                </motion.div>
-
-                {/* 3D FLOATING MOCKUP - SKEUOMORPHIC TABLET */}
-                <motion.div
-                    style={{ rotateX, rotateY, perspective: 1000 }}
-                    className="mt-12 sm:mt-16 md:mt-20 lg:mt-32 w-full max-w-5xl mx-auto relative group z-20 px-4"
-                >
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.8, rotateX: 20 }}
-                        animate={{ opacity: 1, scale: 1, rotateX: 10 }}
-                        transition={{ duration: 1, delay: 0.3 }}
-                        className="rounded-3xl md:rounded-[3rem] bg-[#EFF6FF] p-3 md:p-6 shadow-[10px_10px_30px_#cad4e0,-10px_-10px_30px_#ffffff] md:shadow-[20px_20px_60px_#cad4e0,-20px_-20px_60px_#ffffff] border border-white/80"
-                    >
-                        {/* Physical Bezel */}
-                        <div className="rounded-2xl md:rounded-[2.5rem] bg-[#e0eafc] p-1 md:p-2 shadow-inner border border-slate-200">
-                            {/* Screen */}
-                            <div className="rounded-xl md:rounded-[2rem] overflow-hidden bg-[#EFF6FF] aspect-[4/3] md:aspect-[16/9] flex flex-col shadow-[inset_2px_2px_10px_rgba(0,0,0,0.05)] border border-white">
-                                {/* Header Bar */}
-                                <div className="h-10 md:h-16 bg-[#EFF6FF] border-b border-slate-200/60 flex items-center px-4 md:px-8 gap-4 shadow-sm z-10">
-                                    <div className="flex gap-2 md:gap-3">
-                                        <div className="w-2 md:w-3 h-2 md:h-3 rounded-full bg-red-400 shadow-sm"></div>
-                                        <div className="w-2 md:w-3 h-2 md:h-3 rounded-full bg-yellow-400 shadow-sm"></div>
-                                        <div className="w-2 md:w-3 h-2 md:h-3 rounded-full bg-green-400 shadow-sm"></div>
-                                    </div>
-                                    <div className="flex-1 flex justify-center">
-                                        <div className="w-40 sm:w-48 md:w-64 h-6 md:h-10 bg-[#EFF6FF] rounded-lg shadow-skeuo-inset-sm flex items-center justify-center text-[11px] sm:text-xs md:text-xs text-slate-400 font-bold tracking-wide">HEALTH_TRACK_OS</div>
-                                    </div>
-                                </div>
-
-                                {/* App Content */}
-                                <div className="flex-1 p-4 md:p-8 bg-[#F8FAFC] grid grid-cols-12 md:gap-8 relative overflow-hidden">
-                                    {/* Texture on Screen */}
-                                    <div className="absolute inset-0 opacity-30 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:16px_16px]"></div>
-
-                                    {/* Sidebar */}
-                                    <div className="hidden md:flex col-span-1 flex-col gap-6 items-center pt-4">
-                                        <div className="w-12 h-12 rounded-2xl bg-[#EFF6FF] shadow-skeuo-md flex items-center justify-center text-teal-600"><Activity className="w-6 h-6" /></div>
-                                        <div className="w-10 h-10 rounded-xl bg-[#EFF6FF] shadow-skeuo-sm flex items-center justify-center text-slate-400 hover:text-teal-500 transition-colors"><Pill className="w-5 h-5" /></div>
-                                        <div className="w-10 h-10 rounded-xl bg-[#EFF6FF] shadow-skeuo-sm flex items-center justify-center text-slate-400 hover:text-teal-500 transition-colors"><Brain className="w-5 h-5" /></div>
-                                    </div>
-
-                                    {/* Main Widget Area */}
-                                    <div className="col-span-12 md:col-span-11 grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-8 z-10">
-                                        {/* Big Widget - Simplified on mobile */}
-                                        <div className="md:col-span-2 bg-[#EFF6FF] rounded-2xl md:rounded-3xl p-3 md:p-8 shadow-skeuo-lg border border-white/60 relative overflow-hidden">
-                                            <div className="flex justify-between items-center mb-3 md:mb-8">
-                                                <h3 className="text-base md:text-2xl font-bold text-slate-700">Heart</h3>
-                                                <div className="w-6 h-6 md:w-10 md:h-10 rounded-full bg-[#EFF6FF] shadow-skeuo-convex flex items-center justify-center text-slate-400">
-                                                    <Activity className="w-3 h-3 md:w-5 md:h-5" />
-                                                </div>
-                                            </div>
-                                            {/* Graph Simulation */}
-                                            <div className="flex items-end gap-1.5 md:gap-3 h-16 md:h-40 px-1 md:px-2 pb-2">
-                                                {[30, 50, 45, 80, 60, 90, 55, 70, 40].map((h, i) => (
-                                                    <div key={i} className="flex-1 bg-[#EFF6FF] rounded-full shadow-skeuo-inset-sm relative overflow-hidden group">
-                                                        <div style={{ height: `${h}%` }} className="absolute bottom-0 w-full bg-teal-500 rounded-full opacity-80 shadow-[0_0_10px_rgba(20,184,166,0.5)]"></div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-
-                                        {/* Small Widget - Simplified on mobile */}
-                                        <div className="md:col-span-1 bg-[#EFF6FF] rounded-2xl md:rounded-3xl p-3 md:p-8 shadow-skeuo-convex border border-white/60 flex flex-col justify-between items-center text-center">
-                                            <div className="w-10 h-10 md:w-20 md:h-20 rounded-full bg-[#EFF6FF] shadow-skeuo-md flex items-center justify-center text-teal-500 mb-2 md:mb-4 border border-white">
-                                                <span className="text-lg md:text-2xl font-bold">98</span>
-                                            </div>
-                                            <div>
-                                                <div className="text-slate-800 font-bold text-sm md:text-lg">Score</div>
-                                                <div className="text-slate-400 text-xs md:text-sm mt-0.5 md:mt-1 hidden md:block">Excellent</div>
-                                            </div>
-                                            <button className="mt-3 md:mt-6 w-full py-2 md:py-3 rounded-xl bg-[#EFF6FF] shadow-skeuo-sm text-[10px] md:text-sm font-bold text-teal-600 active:shadow-skeuo-inset-sm transition-all">
-                                                View
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
-                </motion.div>
-            </section>
-
-            {/* FEATURES */}
-            <section className="py-20 md:py-32 px-4 container mx-auto relative z-10">
-                <div className="mb-16 md:mb-24 md:pl-12 text-center md:text-left">
-                    <span className="text-teal-600 font-bold uppercase text-xs mb-4 block tracking-widest shadow-none">System Capabilities</span>
-                    <h2 className="text-4xl md:text-6xl font-black text-slate-800 leading-tight">
-                        Tangible Results. <br />
-                        <span className="text-slate-400">Real Impact.</span>
-                    </h2>
                 </div>
+            </section >
 
-                <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10">
-                    {features.map((feature, i) => (
-                        <div key={i} className={cn(
-                            "card-skeuo card-skeuo-hover group",
-                            (i === 0 || i === 3) ? "lg:col-span-2" : "lg:col-span-1"
-                        )}>
-                            <div className="flex flex-col h-full justify-between">
-                                <div className="mb-6 md:mb-8 p-1 md:p-2">
-                                    <div className={cn("w-12 h-12 md:w-16 md:h-16 rounded-2xl flex items-center justify-center mb-4 md:mb-6 shadow-skeuo-floating bg-[#EFF6FF] border border-white", feature.color)}>
-                                        <feature.icon className="w-6 h-6 md:w-8 md:h-8" />
-                                    </div>
-                                    <h3 className="text-xl md:text-2xl font-bold text-slate-800 mb-2 md:mb-3">{feature.title}</h3>
-                                    <p className="text-sm md:text-base text-slate-500 font-medium leading-relaxed">{feature.desc}</p>
-                                </div>
-                                <div className="space-y-4 bg-[#F8FAFC]/50 p-4 md:p-6 rounded-2xl shadow-skeuo-inset-sm border-b border-white">
-                                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-                                        {feature.points.map((pt: string, idx: number) => (
-                                            <li key={idx} className="flex items-center gap-2 md:gap-3 text-xs md:text-sm text-slate-600 font-bold">
-                                                <div className={cn("w-1.5 h-1.5 md:w-2 md:h-2 rounded-full shadow-sm bg-teal-400")}></div>
-                                                {pt}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
+            {/* FOOTER */}
+            < footer className="py-8 relative z-10 bg-[#FDFBF7] shadow-skeuo-sm border-t border-white/50" >
+                <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-center gap-2">
+                    <div className="text-[#173836]/60 text-sm font-bold flex items-center gap-2">
+                        <Activity className="w-4 h-4 text-[#20B2AA]" />
+                        © 2026 HealthTrack Platform. Powered by Skeuomorphism.
+                    </div>
                 </div>
-            </section>
-
-            {/* FINAL CTA */}
-            <section className="min-h-[50vh] md:min-h-[60vh] flex flex-col justify-center items-center text-center px-4 relative overflow-hidden py-20">
-                {/* Background Decoration */}
-                <div className="absolute inset-0 bg-[#EFF6FF]">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[800px] h-[300px] md:h-[800px] rounded-full bg-white shadow-skeuo-md opacity-40"></div>
-                </div>
-
-                <div className="relative z-10 space-y-6 md:space-y-10">
-                    <h2 className="text-5xl md:text-8xl font-black text-slate-800 tracking-tight drop-shadow-sm">Ready?</h2>
-                    <p className="text-lg md:text-2xl text-slate-500 font-medium px-4">Join the future of tangible health tracking.</p>
-                    <Link to="/register" className="block w-full sm:w-auto px-6">
-                        <button className="btn-skeuo-primary text-xl md:text-2xl px-8 md:px-12 py-4 md:py-6 rounded-2xl shadow-skeuo-lg hover:shadow-skeuo-floating transition-all w-full sm:w-auto transform hover:-translate-y-1">
-                            Create Free Account
-                        </button>
-                    </Link>
-                </div>
-            </section>
-
-            {/* SIMPLE FOOTER */}
-            <footer className="py-12 text-center text-slate-500 text-sm border-t border-slate-200 bg-[#EFF6FF]">
-                <div className="inline-block px-6 py-2 rounded-full shadow-skeuo-inset-sm bg-[#EFF6FF]">
-                    <p className="font-semibold">© 2026 HealthTrack+ <span className="mx-2 text-slate-300">|</span> v2.5.0 SKEUO</p>
-                </div>
-            </footer>
-        </div>
+            </footer >
+        </div >
     )
-}
+} 

@@ -34,10 +34,10 @@ export function MobileSidebar({ items = navItems }: MobileSidebarProps) {
             {/* Mobile Header Trigger */}
             <div className="fixed top-0 left-0 right-0 h-16 bg-white border-b border-border z-40 flex items-center px-4 justify-between">
                 <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-lg flex items-center justify-center">
-                        <img src="/logo.svg" alt="HealthTrack Logo" className="h-8 w-8" />
+                    <div className="flex items-center justify-center">
+                        <img src="/Logo.png" alt="HealthTrack Logo" className="h-[28px] w-auto object-contain" />
                     </div>
-                    <span className="font-bold tracking-tight text-foreground text-lg">HealthTrack+</span>
+                    {/* <span className="font-bold tracking-tight text-foreground text-lg">HealthTrack+</span> */}
                 </div>
                 <Button variant="ghost" size="icon" onClick={() => setIsOpen(true)}>
                     <Menu className="h-6 w-6" />
