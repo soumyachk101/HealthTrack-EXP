@@ -13,6 +13,8 @@ export default function VerifyOTP() {
     const [error, setError] = useState<string | null>(null)
     const [email, setEmail] = useState<string>("")
     const [verificationType, setVerificationType] = useState<string>("login")
+    const [resendMessage, setResendMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
+    const [isResending, setIsResending] = useState(false)
 
     const inputRefs = useRef<(HTMLInputElement | null)[]>([])
     const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
@@ -91,7 +93,7 @@ export default function VerifyOTP() {
                 body: JSON.stringify({
                     email,
                     otp: otpCode,
-                    type: verificationType
+                    otp_type: verificationType
                 })
             })
 
@@ -129,6 +131,39 @@ export default function VerifyOTP() {
         }
     }
 
+    const handleResend = async () => {
+        setIsResending(true)
+        setResendMessage(null)
+        setError(null)
+
+        try {
+            const response = await fetch(`${API_URL}/accounts/api/resend-otp/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                credentials: 'include',
+                body: JSON.stringify({
+                    email,
+                    otp_type: verificationType
+                })
+            })
+
+            const data = await response.json()
+
+            if (data.success) {
+                setResendMessage({ type: 'success', text: 'New verification code sent!' })
+            } else {
+                setResendMessage({ type: 'error', text: data.error || 'Failed to resend code' })
+            }
+        } catch (err) {
+            setResendMessage({ type: 'error', text: 'Network error. Please try again.' })
+        } finally {
+            setIsResending(false)
+        }
+    }
+
     return (
         <div className="min-h-screen bg-[url('/bg-grid.svg')] bg-[#FDFBF7] bg-grid-pattern selection:bg-[#20B2AA]/20 selection:text-[#0F827A] flex items-center justify-center p-4 py-12">
             <div className="w-full max-w-md">
@@ -154,6 +189,16 @@ export default function VerifyOTP() {
                         {error && (
                             <div className="p-4 mb-6 text-sm text-rose-600 bg-rose-50 border border-rose-100 rounded-xl font-medium text-center">
                                 {error}
+                            </div>
+                        )}
+                        {resendMessage && (
+                            <div className={cn(
+                                "p-4 mb-6 text-sm rounded-xl font-medium text-center border",
+                                resendMessage.type === 'success'
+                                    ? "text-emerald-700 bg-emerald-50 border-emerald-100"
+                                    : "text-rose-600 bg-rose-50 border-rose-100"
+                            )}>
+                                {resendMessage.text}
                             </div>
                         )}
 
@@ -196,8 +241,13 @@ export default function VerifyOTP() {
                     <div className="mt-8 text-center flex flex-col items-center gap-5 relative z-10">
                         <p className="text-[#20B2AA]/80 text-sm font-medium">
                             Didn't receive the code?{" "}
-                            <button type="button" className="text-[#0F827A] font-bold hover:underline cursor-pointer transition-colors">
-                                Resend
+                            <button
+                                type="button"
+                                onClick={handleResend}
+                                disabled={isResending}
+                                className="text-[#0F827A] font-bold hover:underline cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-wait"
+                            >
+                                {isResending ? 'Resending...' : 'Resend'}
                             </button>
                         </p>
                         <button
