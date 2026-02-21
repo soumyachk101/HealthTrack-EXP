@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Calendar, Clock, FileText, Users, Stethoscope, Settings, Home, Check, X, Video, Plus } from 'lucide-react'
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -28,11 +28,7 @@ export default function DoctorDashboard() {
 
     const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
 
-    useEffect(() => {
-        fetchAppointments()
-    }, [])
-
-    const fetchAppointments = async () => {
+    const fetchAppointments = React.useCallback(async () => {
         try {
             const token = localStorage.getItem('token')
             const response = await fetch(`${API_URL}/core/api/appointments/`, {
@@ -58,7 +54,11 @@ export default function DoctorDashboard() {
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [API_URL])
+
+    useEffect(() => {
+        fetchAppointments()
+    }, [fetchAppointments])
 
     const handleAction = async (id: number, action: 'accept' | 'reject' | 'complete') => {
         try {

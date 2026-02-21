@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Clock, MapPin, DollarSign, CheckCircle, TrendingUp, Package, Home, Settings, Navigation, Bell } from 'lucide-react'
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -29,11 +29,7 @@ export default function ProviderDashboard() {
 
     const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"
 
-    useEffect(() => {
-        fetchRequests()
-    }, [])
-
-    const fetchRequests = async () => {
+    const fetchRequests = React.useCallback(async () => {
         try {
             const token = localStorage.getItem('token')
             const response = await fetch(`${API_URL}/core/api/service-requests/`, {
@@ -63,7 +59,11 @@ export default function ProviderDashboard() {
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [API_URL])
+
+    useEffect(() => {
+        fetchRequests()
+    }, [fetchRequests])
 
     const handleAction = async (id: number, action: 'accept' | 'decline' | 'complete') => {
         try {

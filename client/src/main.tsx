@@ -27,7 +27,7 @@ const AddHealthRecord = React.lazy(() => import('./pages/forms/AddHealthRecord')
 const AddPrescription = React.lazy(() => import('./pages/forms/AddPrescription'))
 
 // Loading Component
-const PageLoader = () => (
+export const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-background">
     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
   </div>

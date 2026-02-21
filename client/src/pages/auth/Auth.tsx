@@ -43,7 +43,7 @@ export default function Auth() {
         console.log("Auth Component Mounted")
         console.log("Using API_URL:", API_URL)
         console.log("Mode:", mode)
-    }, [mode])
+    }, [mode, API_URL])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()

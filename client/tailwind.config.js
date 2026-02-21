@@ -56,57 +56,37 @@ export default {
                 '3xl': '2rem',
             },
             boxShadow: {
-                'soft': '0 4px 20px -2px rgba(45, 212, 191, 0.1)',
+                // SKEUOMORPHIC SHADOWS FOR #EFF6FF (Light Blue/Gray) background
+                'skeuo-primary': '5px 5px 12px #cdd8eb, -5px -5px 12px #ffffff',
+                'skeuo-primary-active': 'inset 4px 4px 8px #cdd8eb, inset -4px -4px 8px #ffffff',
 
-                // SKEUOMORPHIC SHADOWS (Light Source: Top Left)
-                // Base: #EFF6FF (Light Blue/Grey)
+                'skeuo-premium': '14px 14px 28px #cbd5e1, -14px -14px 28px #ffffff',
+                'skeuo-premium-inset': 'inset 6px 6px 12px #cbd5e1, inset -6px -6px 12px #ffffff',
+                'skeuo-premium-focus': 'inset 4px 4px 8px #cbd5e1, inset -4px -4px 8px #ffffff, 0 0 0 3px rgba(20, 184, 166, 0.4)',
 
-                'skeuo-primary': '5px 5px 10px #e4e2de, -5px -5px 10px #ffffff, inset 2px 2px 5px rgba(255, 255, 255, 0.4), inset -2px -2px 5px rgba(0, 100, 100, 0.2)',
-                'skeuo-primary-active': 'inset 4px 4px 8px rgba(0, 100, 100, 0.3), inset -4px -4px 8px rgba(255, 255, 255, 0.2)',
+                // Pill / Navbar specific
+                'skeuo-nav': '0px 10px 30px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04)',
 
-                // Ultra-Premium Phase 6
-                'skeuo-premium': '10px 10px 20px #d8d6d1, -10px -10px 20px #ffffff, inset 1px 1px 2px rgba(255, 255, 255, 0.8), inset -1px -1px 2px rgba(0, 0, 0, 0.05)',
-                'skeuo-premium-inset': 'inset 6px 6px 12px #d8d6d1, inset -6px -6px 12px #ffffff',
-                'skeuo-premium-focus': 'inset 4px 4px 8px #d8d6d1, inset -4px -4px 8px #ffffff, 0 0 0 2px rgba(32, 178, 170, 0.3)',
-
-                // Standard Raised Element (Card, Container)
-                'skeuo-sm': '5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff',
-                'skeuo-md': '8px 8px 16px #d1d9e6, -8px -8px 16px #ffffff',
-                'skeuo-lg': '12px 12px 24px #d1d9e6, -12px -12px 24px #ffffff',
-
-                // Pressed/Inset Element (Input, Active Button)
-                'skeuo-inset-sm': 'inset 2px 2px 5px #d1d9e6, inset -2px -2px 5px #ffffff',
-                'skeuo-inset-md': 'inset 5px 5px 10px #d1d9e6, inset -5px -5px 10px #ffffff',
-
-                // Convex/Concave specific (Buttons)
-                'skeuo-convex': '6px 6px 12px #b8c2cc, -6px -6px 12px #ffffff',
-
-                // Floating/Active state
-                'skeuo-floating': '14px 14px 28px #d1d9e6, -14px -14px 28px #ffffff, 0 4px 20px rgba(45, 212, 191, 0.2)',
+                // Utility Depths
+                'skeuo-sm': '4px 4px 8px #d1d9e6, -4px -4px 8px #ffffff',
+                'skeuo-md': '8px 8px 16px #cbd5e1, -8px -8px 16px #ffffff',
+                'skeuo-lg': '12px 12px 24px #cbd5e1, -12px -12px 24px #ffffff',
+                'skeuo-inset-sm': 'inset 2px 2px 5px #cbd5e1, inset -2px -2px 5px #ffffff',
+                'skeuo-inset-md': 'inset 5px 5px 10px #cbd5e1, inset -5px -5px 10px #ffffff',
             },
             keyframes: {
-                'glow-subtle': {
-                    '0%, 100%': {
-                        boxShadow: '5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff'
-                    },
-                    '50%': {
-                        boxShadow: '5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff, 0 0 20px rgba(45, 212, 191, 0.3)'
-                    }
+                'float': {
+                    '0%, 100%': { transform: 'translateY(0)' },
+                    '50%': { transform: 'translateY(-10px)' }
                 },
-                'blob-float': {
-                    '0%, 100%': { transform: 'translate(0, 0) scale(1)' },
-                    '33%': { transform: 'translate(30px, -30px) scale(1.1)' },
-                    '66%': { transform: 'translate(-20px, 20px) scale(0.9)' }
-                },
-                'skeuo-pulse': {
-                    '0%, 100%': { transform: 'scale(1)', boxShadow: '10px 10px 20px #d8d6d1, -10px -10px 20px #ffffff, inset 1px 1px 2px rgba(255, 255, 255, 0.8), inset -1px -1px 2px rgba(0, 0, 0, 0.05)' },
-                    '50%': { transform: 'scale(1.02) translateY(-2px)', boxShadow: '15px 15px 30px #d8d6d1, -15px -15px 30px #ffffff, inset 2px 2px 4px rgba(255, 255, 255, 0.9), inset -2px -2px 4px rgba(0, 0, 0, 0.08)' }
+                'pulse-glow': {
+                    '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
+                    '50%': { opacity: '0.7', transform: 'scale(1.05)' }
                 }
             },
             animation: {
-                'glow-subtle': 'glow-subtle 4s ease-in-out infinite',
-                'blob-float': 'blob-float 7s infinite',
-                'skeuo-pulse': 'skeuo-pulse 3s ease-in-out infinite'
+                'float': 'float 6s ease-in-out infinite',
+                'pulse-glow': 'pulse-glow 4s ease-in-out infinite'
             }
         },
     },
