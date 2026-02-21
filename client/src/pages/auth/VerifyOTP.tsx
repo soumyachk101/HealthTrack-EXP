@@ -35,6 +35,7 @@ export default function VerifyOTP() {
 
     const handleChange = (index: number, value: string) => {
         if (value.length > 1) return // Prevent multiple chars
+        if (value !== "" && !/^\d$/.test(value)) return // Only allow digits
 
         const newOtp = [...otp]
         newOtp[index] = value
@@ -45,13 +46,12 @@ export default function VerifyOTP() {
             inputRefs.current[index + 1]?.focus()
         }
     }
-
     const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Backspace' && otp[index] === "" && index > 0) {
             inputRefs.current[index - 1]?.focus()
         }
         if (e.key === 'Enter' && otp.every(digit => digit !== "")) {
-            handleSubmit(e as any)
+            handleSubmit()
         }
     }
 
@@ -70,8 +70,8 @@ export default function VerifyOTP() {
         inputRefs.current[nextIndex]?.focus()
     }
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
+    const handleSubmit = async (e?: React.FormEvent) => {
+        if (e) e.preventDefault()
         const otpCode = otp.join("")
 
         if (otpCode.length !== 6) {
@@ -158,6 +158,7 @@ export default function VerifyOTP() {
                 setResendMessage({ type: 'error', text: data.error || 'Failed to resend code' })
             }
         } catch (err) {
+            console.error('Resend error:', err)
             setResendMessage({ type: 'error', text: 'Network error. Please try again.' })
         } finally {
             setIsResending(false)

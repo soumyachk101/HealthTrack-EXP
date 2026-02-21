@@ -9,8 +9,7 @@ export default function Login() {
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(false)
     const [csrfToken, setCsrfToken] = useState<string>("")
-    // Set dummy credentials as requested
-    const [formData, setFormData] = useState({ username: "soumyachk1@gmail.com", password: "Soumya@933" })
+    const [formData, setFormData] = useState({ username: "", password: "" })
     const [role, setRole] = useState<'patient' | 'doctor' | 'provider'>('patient')
     const [error, setError] = useState<string | null>(null)
 
@@ -41,8 +40,8 @@ export default function Login() {
                 },
                 credentials: 'include',
                 body: JSON.stringify({
-                    username: (e.target as any).username.value,
-                    password: (e.target as any).password.value
+                    username: formData.username,
+                    password: formData.password
                 })
             })
 
@@ -50,7 +49,7 @@ export default function Login() {
 
             if (data.success) {
                 if (data.otp_required) {
-                    localStorage.setItem('verification_email', (e.target as any).username.value)
+                    localStorage.setItem('verification_email', formData.username)
                     localStorage.setItem('verification_type', 'login')
                     navigate('/verify-otp')
                     return
@@ -133,7 +132,7 @@ export default function Login() {
                         <div className="space-y-2">
                             <div className="flex items-center justify-between ml-2 mr-2">
                                 <label className="text-sm font-bold text-[#173836] uppercase tracking-wider text-xs">Password</label>
-                                <a href="#" className="text-sm font-bold text-[#20B2AA] hover:text-[#0F827A] transition-colors">Forgot Password?</a>
+                                <a href="/forgot-password" className="text-sm font-bold text-[#20B2AA] hover:text-[#0F827A] transition-colors">Forgot Password?</a>
                             </div>
                             <input
                                 name="password"
